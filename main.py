@@ -1,5 +1,10 @@
 # Example file showing a circle moving on screen
 import pygame
+import os
+
+# Import des Classes
+from player import Player
+from tile import Tile
 
 # pygame setup
 pygame.init()
@@ -8,36 +13,80 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
+# map
+map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 2, 2, 2, 2, 0, 0, 1], [1, 0, 1, 2, 1, 2, 1, 2, 0, 1], [1, 2, 2, 2, 2, 2, 2, 2, 2, 1], [1, 0, 1, 2, 1, 2, 1, 2, 0, 1], [1, 0, 0, 2, 2, 2, 2, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+# creation grille de jeu
+
+grille_du_jeu = []
+
+for y, ligne in enumerate(map):
+    ligne_de_tiles = []
+    for x, valeur in enumerate(ligne):
+        # 1 = mur, 2 = mur_cassable, sinon passage
+        if valeur == 1:
+            t_type = "mur"
+        elif valeur == 2:
+            t_type = "mur_cassable"
+        else:
+            t_type = "passage"
+            
+        nouvelle_tile = Tile(x, y, t_type)
+        ligne_de_tiles.append(nouvelle_tile)
+        
+    grille_du_jeu.append(ligne_de_tiles)
+
+
+# chargement des images
+surf_original = pygame.image.load(os.path.join('Sprites', 'TEST.png')).convert_alpha()
+bg_original = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
+
+
+# Redimensionnement des images pour avoir un style pixélisé 
+bg = pygame.transform.scale(bg_original, (1280, 720))
+surf = pygame.transform.scale(surf_original, (64, 64)) 
+
+# Position initiale du joueur au centre
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+player_speed = 300  # Vitesse en px/s
+
+
+#Joueur 1
+player1 = Player('test', 3, player_pos.x, player_pos.y)
+
+
 
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    screen.fill("grey")
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    # Affichage du fond d'écran en premier
+    screen.blit(bg, (0, 0))
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    for ligne in grille_du_jeu:
+        for tile in ligne:
+            tile.draw(screen)
+    
+
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+
+    
     if keys[pygame.K_e]:
-        pygame.quit() 
-    # flip() the display to put your work on screen
+        running = False  # Quitter proprement la boucle plutôt que couper brutalement avec pygame.quit()
+
+    # --- Affichage du joueur ---
+
+    player1.show(surf,screen)
+
+    # Mouvement Joueur
+    player1.move(dt,keys,grille_du_jeu)
+    # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
+    # Limite à 60 FPS et calcul du dt (en secondes)
     dt = clock.tick(60) / 1000
 
+pygame.quit()
