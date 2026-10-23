@@ -3,7 +3,7 @@ import pygame
 class Tile:
     def __init__(self, x, y, tile_type):
         self.tile_type = tile_type
-        self.rect = pygame.Rect(x * 32, y * 32, 32, 32)
+        self.rect = pygame.Rect(x * 32, y * 32, 128, 100)
 
     def draw(self, screen):
         if self.tile_type == "mur":
