@@ -8,13 +8,13 @@ from tile import Tile
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((1030, 630))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
 # map
-map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 2, 2, 2, 2, 0, 0, 1], [1, 0, 1, 2, 1, 2, 1, 2, 0, 1], [1, 2, 2, 2, 2, 2, 2, 2, 2, 1], [1, 0, 1, 2, 1, 2, 1, 2, 0, 1], [1, 0, 0, 2, 2, 2, 2, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1] ,[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 # creation grille de jeu
 
@@ -38,16 +38,16 @@ for y, ligne in enumerate(map):
 
 
 # chargement des images
-surf_original = pygame.image.load(os.path.join('Sprites', 'TEST.png')).convert_alpha()
+surf_original = pygame.image.load(os.path.join('Sprites', 'Sprite_char.png')).convert_alpha()
 bg_original = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 
 
 # Redimensionnement des images pour avoir un style pixélisé 
-bg = pygame.transform.scale(bg_original, (1280, 720))
-surf = pygame.transform.scale(surf_original, (64, 64)) 
+bg = pygame.transform.scale(bg_original, (1030, 630))
+surf = pygame.transform.scale(surf_original, (44, 50)) 
 
 # Position initiale du joueur au centre
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+player_pos = pygame.Vector2(70,70)
 player_speed = 300  # Vitesse en px/s
 
 
