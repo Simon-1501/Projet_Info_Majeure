@@ -23,18 +23,28 @@ class Player:
     def take_object(self, object):
         self.object = object
 
-    def move(self, dt, keys, grille):
+    def move(self, dt, keys, grille, njoueur):
         mouvement = pygame.Vector2(0, 0)
 
-        if keys[pygame.K_z]:
+        if njoueur == 1:
+            if keys[pygame.K_z]:
                 mouvement.y -= self.speed * dt
-        elif keys[pygame.K_s]:
+            elif keys[pygame.K_s]:
                 mouvement.y += self.speed * dt
-        elif keys[pygame.K_q]:
+            elif keys[pygame.K_q]:
                 mouvement.x -= self.speed * dt
-        elif keys[pygame.K_d]:
+            elif keys[pygame.K_d]:
                 mouvement.x += self.speed * dt
-
+        
+        if njoueur == 2:
+            if keys[pygame.K_UP]:
+                mouvement.y -= self.speed * dt
+            elif keys[pygame.K_DOWN]:
+               mouvement.y += self.speed * dt
+            elif keys[pygame.K_LEFT]:
+                mouvement.x -= self.speed * dt
+            elif keys[pygame.K_RIGHT]:
+                mouvement.x += self.speed * dt
         
          # déplacement et collision sur l'axe X
         self.pos.x += mouvement.x

@@ -5,6 +5,7 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
+from Ai import *
 
 # pygame setup
 pygame.init()
@@ -53,7 +54,7 @@ player_speed = 300  # Vitesse en px/s
 
 #Joueur 1
 player1 = Player('test', 3, player_pos.x, player_pos.y)
-
+player2 = Player('Robot', 3, player_pos.x, player_pos.y)
 
 
 while running:
@@ -80,9 +81,13 @@ while running:
     # --- Affichage du joueur ---
 
     player1.show(surf,screen)
+    player2.show(surf,screen)
 
     # Mouvement Joueur
-    player1.move(dt,keys,grille_du_jeu)
+    player1.move(dt,keys,grille_du_jeu,1)
+    player2.move(dt,keys,grille_du_jeu,2)
+    #Mouvement AI (test)
+
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 

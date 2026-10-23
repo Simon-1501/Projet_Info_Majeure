@@ -1,12 +1,14 @@
 from labyrinthe import *
 
+"""Legende : '#' = mur incassable, '+' = mur cassable, ' ' = chemin """
+
 carte = ["###############",
          "#             #",
-         "# # # # # # # #",
+         "# + + + + + + #",
          "#             #",
-         "# # # # # # # #",
+         "# + + + + + + #",
          "#             #",
-         "# # # # # # # #",
+         "# + + + + + + #",
          "#             #",
          "###############"]
 
@@ -45,3 +47,10 @@ def dijkstra(g,s):
 
 #print(dijkstra(graphe_carte, (1,1)))
 
+def reconstruire_chemin(s,t,p):
+    c = [t]
+    while t!=s:
+        t = p[t]
+        c.append(t)
+    c.reverse()
+    return c

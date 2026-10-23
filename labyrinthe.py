@@ -20,7 +20,7 @@ class Labyrinthe:
             return False
         if colonne < 0 or colonne >= len(self.grille[ligne]):
             return False
-        return self.grille[ligne][colonne] != "#"
+        return self.grille[ligne][colonne] != "#" or self.grille[ligne][colonne] != "+"
 
     def voisines(self, position):
         """Renvoie les cases libres autour d'une position : haut, bas, gauche, droite"""
