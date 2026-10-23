@@ -6,9 +6,9 @@ class Player:
         self.nom = nom
         self.vie_max = vie_max
         self.vie = vie_max
-        self.speed = 300
+        self.speed = 150
         self.pos = pygame.Vector2(x, y)
-        self.rect = pygame.Rect(x, y, 32, 32)
+        self.rect = pygame.Rect(x, y, 40, 50)
 
 
     def est_vivant(self):
