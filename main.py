@@ -66,9 +66,11 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        # Ajoute une seule bombe aux coordonnées voulues (ici 200, 200 pour votre test)
                         bombe_suiv = Bomb(player1.pos.x, player1.pos.y)
                         liste_bombes.append(bombe_suiv)
+                    if event.key == pygame.K_RSHIFT:
+                            bombe_suiv = Bomb(player2.pos.x, player2.pos.y)
+                            liste_bombes.append(bombe_suiv)
 
     screen.fill("grey")
 
