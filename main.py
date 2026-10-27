@@ -5,6 +5,7 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
+from bomb import Bomb
 
 # pygame setup
 pygame.init()
@@ -14,7 +15,7 @@ running = True
 dt = 0
 
 # map
-map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1] ,[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 # creation grille de jeu
 
@@ -50,6 +51,8 @@ surf = pygame.transform.scale(surf_original, (44, 50))
 player_pos = pygame.Vector2(70,70)
 player_speed = 300  # Vitesse en px/s
 
+liste_bombes = []
+
 
 #Joueur 1
 player1 = Player('test', 3, player_pos.x, player_pos.y)
@@ -60,6 +63,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        # Ajoute une seule bombe aux coordonnées voulues (ici 200, 200 pour votre test)
+                        bombe_suiv = Bomb(player1.pos.x, player1.pos.y)
+                        liste_bombes.append(bombe_suiv)
+
     screen.fill("grey")
 
     # Affichage du fond d'écran en premier
@@ -74,8 +83,17 @@ while running:
     keys = pygame.key.get_pressed()
 
     
+
     if keys[pygame.K_e]:
-        running = False  # Quitter proprement la boucle plutôt que couper brutalement avec pygame.quit()
+        running = False  # Quitter la boucle
+
+
+    for bombe in liste_bombes[:]: 
+        bombe.update(grille_du_jeu)
+        grille_du_jeu = bombe.draw(screen, grille_du_jeu)
+        if bombe.etat == "détruite":
+            liste_bombes.remove(bombe)
+
 
     # --- Affichage du joueur ---
 
