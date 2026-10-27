@@ -47,7 +47,7 @@ class Bomb:
                             
                             elif tile.tile_type == "mur_cassable":
                                 self.zones_explosion.append(rect_case)
-                                tile.break_wall() # Cassé une fois pour toutes !
+                                tile.break_wall() 
                                 bloque = True
                                 break
                             
