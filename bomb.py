@@ -1,5 +1,6 @@
 import pygame
 from tile import Tile
+from player import Player
 
 class Bomb:
     def __init__(self, x, y, damage = 1, range_b = 3):
@@ -14,17 +15,21 @@ class Bomb:
         self.etat = "attente"        # possible: "attente", "explosion" ou "detruite"
         self.zones_explosion = [self.rect]    # les zones qui vont péter
 
-    def update(self, grille_du_jeu):
+    def update(self, grille_du_jeu, players):
         temps_actuel = pygame.time.get_ticks()
         if self.etat == "attente" and (temps_actuel - self.temps_creation >= self.delai_explosion):
             self.etat = "explosion"
             self.temps_explosion = temps_actuel            
-            self.calculer_et_casser_murs(grille_du_jeu)
+            self.calculer_et_casser_murs_joueurs(grille_du_jeu)
+            for zone in self.zones_explosion:
+                for player in players:
+                    if pygame.Rect.colliderect(zone, player.rect):
+                        player.take_damages(1)
 
         elif self.etat == "explosion" and (temps_actuel - self.temps_explosion >= self.duree_explosion):
             self.etat = "detruite"
 
-    def calculer_et_casser_murs(self, grille):
+    def calculer_et_casser_murs_joueurs(self, grille):
         directions = [
             (0, -70),  # Haut
             (0, 70),   # Bas

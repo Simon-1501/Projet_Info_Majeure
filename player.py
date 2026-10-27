@@ -1,7 +1,7 @@
 import pygame
 
 class Player:
-    def __init__(self,  nom, vie_max, x, y, object=None):
+    def __init__(self,  nom, vie_max, x, y, keyup, keydown, keyleft, keyright, keybomb, object=None):
         self.object = object
         self.nom = nom
         self.vie_max = vie_max
@@ -9,7 +9,11 @@ class Player:
         self.speed = 150
         self.pos = pygame.Vector2(x, y)
         self.rect = pygame.Rect(x, y, 40, 50)
-
+        self.keyup = keyup
+        self.keydown = keydown
+        self.keyleft = keyleft
+        self.keyright = keyright
+        self.keybomb = keybomb
 
     def est_vivant(self):
         if self.vie > 0:
@@ -23,29 +27,19 @@ class Player:
     def take_object(self, object):
         self.object = object
 
-    def move(self, dt, keys, grille, njoueur):
+    def move(self, dt, keys, grille):
         mouvement = pygame.Vector2(0, 0)
 
-        if njoueur == 1:
-            if keys[pygame.K_z]:
-                mouvement.y -= self.speed * dt
-            elif keys[pygame.K_s]:
-                mouvement.y += self.speed * dt
-            elif keys[pygame.K_q]:
-                mouvement.x -= self.speed * dt
-            elif keys[pygame.K_d]:
-                mouvement.x += self.speed * dt
-        
-        if njoueur == 2:
-            if keys[pygame.K_UP]:
-                mouvement.y -= self.speed * dt
-            elif keys[pygame.K_DOWN]:
-               mouvement.y += self.speed * dt
-            elif keys[pygame.K_LEFT]:
-                mouvement.x -= self.speed * dt
-            elif keys[pygame.K_RIGHT]:
-                mouvement.x += self.speed * dt
-        
+        if keys[self.keyup]:
+            mouvement.y -= self.speed * dt
+        elif keys[self.keydown]:
+            mouvement.y += self.speed * dt
+        elif keys[self.keyleft]:
+            mouvement.x -= self.speed * dt
+        elif keys[self.keyright]:
+            mouvement.x += self.speed * dt
+    
+       
          # déplacement et collision sur l'axe X
         self.pos.x += mouvement.x
         self.rect.x = int(self.pos.x) # met à jour le rectangle de collision

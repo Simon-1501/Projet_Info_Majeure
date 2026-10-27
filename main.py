@@ -55,9 +55,8 @@ player_speed = 300  # Vitesse en px/s
 liste_bombes = []
 
 
-#Joueur 1
-player1 = Player('test', 3, player_pos.x, player_pos.y)
-player2 = Player('Robot', 3, player_pos.x, player_pos.y)
+#Joueursd
+players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3,1030-2*70 , 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 
 while running:
@@ -65,13 +64,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        bombe_suiv = Bomb(player1.pos.x, player1.pos.y)
+            for player in players:
+                if event.key == player.keybomb and player.est_vivant():
+                        bombe_suiv = Bomb(player.pos.x, player.pos.y)
                         liste_bombes.append(bombe_suiv)
-                    if event.key == pygame.K_RSHIFT:
-                            bombe_suiv = Bomb(player2.pos.x, player2.pos.y)
-                            liste_bombes.append(bombe_suiv)
-
+            
     screen.fill("grey")
 
     # Affichage du fond d'écran en premier
@@ -92,20 +89,21 @@ while running:
 
 
     for bombe in liste_bombes[:]: 
-        bombe.update(grille_du_jeu)
+        bombe.update(grille_du_jeu, players)
         grille_du_jeu = bombe.draw(screen, grille_du_jeu)
         if bombe.etat == "détruite":
             liste_bombes.remove(bombe)
 
 
     # --- Affichage du joueur ---
-
-    player1.show(surf,screen)
-    player2.show(surf,screen)
+    for player in players:
+        if player.est_vivant():
+            player.show(surf,screen)
 
     # Mouvement Joueur
-    player1.move(dt,keys,grille_du_jeu,1)
-    player2.move(dt,keys,grille_du_jeu,2)
+    for player in players:
+        if player.est_vivant():
+            player.move(dt,keys,grille_du_jeu)
     #Mouvement AI (test)
 
     # Mettre à jour l'affichage de l'écran
