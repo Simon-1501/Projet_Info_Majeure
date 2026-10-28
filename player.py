@@ -1,19 +1,27 @@
 import pygame
 
 class Player:
-    def __init__(self,  nom, vie_max, x, y, keyup, keydown, keyleft, keyright, keybomb, object=None):
+    def __init__(self, sprite, nom, vie_max, x, y, keyup, keydown, keyleft, keyright, keybomb, object=None):
         self.object = object
         self.nom = nom
         self.vie_max = vie_max
         self.vie = vie_max
-        self.speed = 150
+
+        self.sprite = sprite
+        
+        self.pos_grille = [x//70, y//70]
         self.pos = pygame.Vector2(x, y)
         self.rect = pygame.Rect(x, y, 40, 50)
+
         self.keyup = keyup
         self.keydown = keydown
         self.keyleft = keyleft
         self.keyright = keyright
         self.keybomb = keybomb
+
+        self.move_timer = 0         # Chronomètre actuel
+        self.MOVE_COOLDOWN = 0.2    # Temps d'attente entre deux cases (0.2 seconde)
+        self.damage_timer = 0
 
     def est_vivant(self):
         if self.vie > 0:
@@ -24,54 +32,60 @@ class Player:
         if self.vie <= 0:
             self.vie = 0
 
+    def update(self, grille, dt):
+        if self.damage_timer > 0:
+            self.damage_timer -= dt 
+
+        case_actuelle = grille[int(self.pos_grille[1])][int(self.pos_grille[0])]
+        
+        if case_actuelle.current_state.value == "fire":
+            if self.damage_timer <= 0: 
+                self.take_damages(1)
+                self.damage_timer = 0.6 # Donne 0.6 seconde d'invincibilité 
+
     def take_object(self, object):
         self.object = object
 
     def move(self, dt, keys, grille):
-        mouvement = pygame.Vector2(0, 0)
+        if self.move_timer > 0:
+            self.move_timer -= dt
+            if self.move_timer > 0:
+                return None
+            else:
+                self.move_timer = 0
+
+        x_grid = int(self.pos_grille[0])
+        y_grid = int(self.pos_grille[1])
+
+        nb_lignes = len(grille)
+        nb_colonnes = len(grille[0]) if nb_lignes > 0 else 0
+
+        deplacement_effectue = False
 
         if keys[self.keyup]:
-            mouvement.y -= self.speed * dt
+            if y_grid > 0 and grille[y_grid - 1][x_grid].current_state.value in ["fire", "passage"]:
+                self.pos.y -= 70
+                deplacement_effectue = True
+
         elif keys[self.keydown]:
-            mouvement.y += self.speed * dt
+            if y_grid < nb_lignes - 1 and grille[y_grid + 1][x_grid].current_state.value in ["fire", "passage"]:
+                self.pos.y += 70
+                deplacement_effectue = True
+
         elif keys[self.keyleft]:
-            mouvement.x -= self.speed * dt
+            if x_grid > 0 and grille[y_grid][x_grid - 1].current_state.value in ["fire", "passage"]:
+                self.pos.x -= 70
+                deplacement_effectue = True
+
         elif keys[self.keyright]:
-            mouvement.x += self.speed * dt
-    
-       
-         # déplacement et collision sur l'axe X
-        self.pos.x += mouvement.x
-        self.rect.x = int(self.pos.x) # met à jour le rectangle de collision
+            if x_grid < nb_colonnes - 1 and grille[y_grid][x_grid + 1].current_state.value in ["fire", "passage"]:
+                self.pos.x += 70
+                deplacement_effectue = True
 
-        for ligne in grille:
-            for tile in ligne:
-                if tile.tile_type != "passage": # Si c'un mur ou un mur cassable
-                    if self.rect.colliderect(tile.rect):
-                        if mouvement.x > 0:
-                            self.rect.right = tile.rect.left
-                        if mouvement.x < 0:
-                            self.rect.left = tile.rect.right
-                        self.pos.x = self.rect.x
+        if deplacement_effectue:
+            self.move_timer = self.MOVE_COOLDOWN
+            self.pos_grille = [int(self.pos.x // 70), int(self.pos.y // 70)]
 
-        # déplacement et collision sur l'axe Y
-        self.pos.y += mouvement.y
-        self.rect.y = int(self.pos.y)
-    
-        for ligne in grille:
-            for tile in ligne:
-                if tile.tile_type != "passage":
-                    if self.rect.colliderect(tile.rect):
-                        # Si on allait en bas
-                        if mouvement.y > 0:
-                            self.rect.bottom = tile.rect.top
-                        # Si on allait en haut
-                        if mouvement.y < 0:
-                            self.rect.top = tile.rect.bottom
-                        self.pos.y = self.rect.y
-
-
-    def show(self, sprite, screen):
-        # affichage aux bonnes coordonnées
-        rect_joueur = sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
-        screen.blit(sprite, rect_joueur)
+    def show(self, screen):
+        rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+        screen.blit(self.sprite, rect_joueur)
