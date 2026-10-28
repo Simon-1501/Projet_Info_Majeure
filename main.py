@@ -86,6 +86,8 @@ while running:
     for ligne in grille_du_jeu:
         for tile in ligne:
             tile.draw(screen)
+            tile.update(dt, grille_du_jeu)
+
     
 
 
@@ -95,11 +97,6 @@ while running:
 
     if keys[pygame.K_e]:
         running = False  # Quitter la boucle
-
-
-    for ligne in grille_du_jeu:
-        for tile in ligne:
-            tile.update(dt, grille_du_jeu)
 
 
     # Joueure
