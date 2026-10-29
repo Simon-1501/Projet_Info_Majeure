@@ -65,8 +65,8 @@ def parcours_largeur(graphe, depart):
         predecesseur : {sommet: sommet d'où l'on est arrivé}, None pour le départ.
         Ses clés sont les sommets déjà visités ou en attente dans la file.
     """
-    a_visiter = [depart]            # la file : premier arrivé, premier servi
-    predecesseur = {depart: None}
+    a_visiter = [(depart.x,depart.y)]            # la file : premier arrivé, premier servi
+    predecesseur = {(depart.x,depart.y): None}
 
     while a_visiter:
         sommet = a_visiter.pop()   # on retire le premier de la file

@@ -4,10 +4,9 @@ import os
 
 # Import des Classes
 from player import Player
-from AI import AI
 from tile import Tile
 from bomb import Bomb
-from Ai import *
+from AI import *
 
 # pygame setup
 pygame.init()
@@ -50,15 +49,16 @@ bg = pygame.transform.scale(bg_original, (1030, 630))
 surf = pygame.transform.scale(surf_original, (44, 50)) 
 
 # Position initiale du joueur au centre
-player_pos = (70,70)
+player_pos = pygame.Vector2(70,70)
 player_speed = 300  # Vitesse en px/s
-
+AI_pos = pygame.Vector2(140,140)
+AI_speed = 250
 liste_bombes = []
 
 
 #Joueursd
-players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3,1030-2*70 , 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
-
+players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3, 1030-2*70, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
 
 while running:
     for event in pygame.event.get():
@@ -104,7 +104,7 @@ while running:
         if player.est_vivant():
             player.move(dt,keys,grille_du_jeu)
     #Mouvement AI (test)
-
+    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) c'est pas au point zebi
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 

@@ -23,20 +23,20 @@ class AI:
     def take_object(self, object):
         self.object = object
     
-    def moveAI(self, dt, grille, arrive, depart):
+    def moveAI(self, grille, arrive, depart):
         mouvement = pygame.Vector2(0, 0)
         c = Recherche.trouver_joueur(arrive,depart,grille)
         if c[0] != None:
             if c[0] == depart:
                 c.pop(0)
-            elif c[0][1] < depart[1]:
-                mouvement.y -= self.speed * dt
-            elif c[0][1] > depart[1]:
-                mouvement.y += self.speed * dt
-            elif c[0][0] > depart[1]:
-                mouvement.x -= self.speed * dt
-            elif c[0][0] < depart[1]:
-                mouvement.x += self.speed * dt
+            elif c[0][1] < depart.y:
+                mouvement.y -= 70
+            elif c[0][1] > depart.y:
+                mouvement.y += 70
+            elif c[0][0] > depart.x:
+                mouvement.x -= 70
+            elif c[0][0] < depart.x:
+                mouvement.x += 70
      # déplacement et collision sur l'axe X
         self.pos.x += mouvement.x
         self.rect.x = int(self.pos.x) # met à jour le rectangle de collision
