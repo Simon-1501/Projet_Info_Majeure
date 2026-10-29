@@ -4,8 +4,9 @@ import os
 
 # Import des Classes
 from player import Player
+from AI import AI
 from tile import Tile
-from Ai import *
+from Recherche import *
 
 # pygame setup
 pygame.init()
@@ -48,13 +49,14 @@ bg = pygame.transform.scale(bg_original, (1030, 630))
 surf = pygame.transform.scale(surf_original, (44, 50)) 
 
 # Position initiale du joueur au centre
-player_pos = pygame.Vector2(70,70)
+player_pos = (70,70)
 player_speed = 300  # Vitesse en px/s
-
+AI_pos = (140,70)
 
 #Joueur 1
-player1 = Player('test', 3, player_pos.x, player_pos.y)
-player2 = Player('Robot', 3, player_pos.x, player_pos.y)
+player1 = Player('test', 3, player_pos[0], player_pos[1])
+player2 = Player('Robot', 3, player_pos[0], player_pos[1])
+AI1 = AI('AI1', 3, AI_pos[0], AI_pos[1])
 
 
 while running:
@@ -70,11 +72,8 @@ while running:
         for tile in ligne:
             tile.draw(screen)
     
-
-
     keys = pygame.key.get_pressed()
 
-    
     if keys[pygame.K_e]:
         running = False  # Quitter proprement la boucle plutôt que couper brutalement avec pygame.quit()
 
@@ -82,10 +81,12 @@ while running:
 
     player1.show(surf,screen)
     player2.show(surf,screen)
+    AI1.show(surf,screen)
 
     # Mouvement Joueur
     player1.move(dt,keys,grille_du_jeu,1)
     player2.move(dt,keys,grille_du_jeu,2)
+    AI1.moveAI(dt - 50,grille_du_jeu,player_pos,AI_pos)
     #Mouvement AI (test)
 
     # Mettre à jour l'affichage de l'écran

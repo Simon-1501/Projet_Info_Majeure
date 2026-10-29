@@ -1,56 +1,74 @@
-from labyrinthe import *
+import pygame
+import Recherche
 
-"""Legende : '#' = mur incassable, '+' = mur cassable, ' ' = chemin """
+class AI:
+    def __init__(self,  nom, vie_max, x, y, object=None):
+        self.object = object
+        self.nom = nom
+        self.vie_max = vie_max
+        self.vie = vie_max
+        self.speed = 150
+        self.pos = pygame.Vector2(x, y)
+        self.rect = pygame.Rect(x, y, 40, 50)  
+    
+    def est_vivant(self):
+        if self.vie > 0:
+            return True
+    
+    def take_damages(self, damages):
+        self.vie -= damages
+        if self.vie <= 0:
+            self.vie = 0
+    
+    def take_object(self, object):
+        self.object = object
+    
+    def moveAI(self, dt, grille, arrive, depart):
+        mouvement = pygame.Vector2(0, 0)
+        c = Recherche.trouver_joueur(arrive,depart,grille)
+        if c[0] != None:
+            if c[0] == depart:
+                c.pop(0)
+            elif c[0][1] < depart[1]:
+                mouvement.y -= self.speed * dt
+            elif c[0][1] > depart[1]:
+                mouvement.y += self.speed * dt
+            elif c[0][0] > depart[1]:
+                mouvement.x -= self.speed * dt
+            elif c[0][0] < depart[1]:
+                mouvement.x += self.speed * dt
+     # déplacement et collision sur l'axe X
+        self.pos.x += mouvement.x
+        self.rect.x = int(self.pos.x) # met à jour le rectangle de collision
+    
+        for ligne in grille:
+            for tile in ligne:
+                if tile.tile_type != "passage": # Si c'un mur ou un mur cassable
+                    if self.rect.colliderect(tile.rect):
+                        if mouvement.x > 0:
+                            self.rect.right = tile.rect.left
+                        if mouvement.x < 0:
+                            self.rect.left = tile.rect.right
+                        self.pos.x = self.rect.x
+    
+        # déplacement et collision sur l'axe Y
+        self.pos.y += mouvement.y
+        self.rect.y = int(self.pos.y)
+        
+        for ligne in grille:
+            for tile in ligne:
+                if tile.tile_type != "passage":
+                    if self.rect.colliderect(tile.rect):
+                        # Si on allait en bas
+                        if mouvement.y > 0:
+                            self.rect.bottom = tile.rect.top
+                        # Si on allait en haut
+                        if mouvement.y < 0:
+                            self.rect.top = tile.rect.bottom
+                        self.pos.y = self.rect.y
+    
 
-carte = ["###############",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
-         "###############"]
-
-carte = Labyrinthe(carte)
-graphe_carte = graphe_du_labyrinthe(carte)
-
-for i in graphe_carte:
-    for j in range(len(graphe_carte[i])):
-        T = graphe_carte[i][j]
-        graphe_carte[i][j] = ((T[0],T[1]),1)
-#print(graphe_carte)
-
-def arc_sortant_min(g,M,d):
-    d_min = float('inf')
-    for x in M:
-        for y,l in g[x]:
-            if y not in M:
-                if d[x] + l < d_min:
-                    d_min=d[x]+l
-                    x_min = x
-                    y_min = y
-    if d_min < float('inf'):
-        return x_min,y_min,d_min
-    return None
-
-def dijkstra(g,s):
-    M = [s]
-    d = {s:0}
-    p = {}
-    while arc_sortant_min(g,M,d):
-        x,y,l = arc_sortant_min(g,M,d)    
-        M.append(y)
-        p[y] = x
-        d[y] = d[x] + l
-    return(M,d,p)
-
-#print(dijkstra(graphe_carte, (1,1)))
-
-def reconstruire_chemin(s,t,p):
-    c = [t]
-    while t!=s:
-        t = p[t]
-        c.append(t)
-    c.reverse()
-    return c
+    def show(self, sprite, screen):
+        # affichage aux bonnes coordonnées
+        rect_joueur = sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+        screen.blit(sprite, rect_joueur)

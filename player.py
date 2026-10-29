@@ -46,7 +46,7 @@ class Player:
             elif keys[pygame.K_RIGHT]:
                 mouvement.x += self.speed * dt
         
-         # déplacement et collision sur l'axe X
+        # déplacement et collision sur l'axe X
         self.pos.x += mouvement.x
         self.rect.x = int(self.pos.x) # met à jour le rectangle de collision
 
