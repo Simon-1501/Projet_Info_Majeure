@@ -6,7 +6,8 @@ import os
 from player import Player
 from AI import AI
 from tile import Tile
-from Recherche import *
+from bomb import Bomb
+from Ai import *
 
 # pygame setup
 pygame.init()
@@ -16,7 +17,7 @@ running = True
 dt = 0
 
 # map
-map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1] ,[1,0,2,0,2,0,2,0,2,0,2,0,2,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 # creation grille de jeu
 
@@ -51,18 +52,24 @@ surf = pygame.transform.scale(surf_original, (44, 50))
 # Position initiale du joueur au centre
 player_pos = (70,70)
 player_speed = 300  # Vitesse en px/s
-AI_pos = (140,70)
 
-#Joueur 1
-player1 = Player('test', 3, player_pos[0], player_pos[1])
-player2 = Player('Robot', 3, player_pos[0], player_pos[1])
-AI1 = AI('AI1', 3, AI_pos[0], AI_pos[1])
+liste_bombes = []
+
+
+#Joueursd
+players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3,1030-2*70 , 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            for player in players:
+                if event.key == player.keybomb and player.est_vivant():
+                        bombe_suiv = Bomb(player.pos.x, player.pos.y)
+                        liste_bombes.append(bombe_suiv)
+            
     screen.fill("grey")
 
     # Affichage du fond d'écran en premier
@@ -74,19 +81,28 @@ while running:
     
     keys = pygame.key.get_pressed()
 
+    
+
     if keys[pygame.K_e]:
-        running = False  # Quitter proprement la boucle plutôt que couper brutalement avec pygame.quit()
+        running = False  # Quitter la boucle
+
+
+    for bombe in liste_bombes[:]: 
+        bombe.update(grille_du_jeu, players)
+        grille_du_jeu = bombe.draw(screen, grille_du_jeu)
+        if bombe.etat == "détruite":
+            liste_bombes.remove(bombe)
+
 
     # --- Affichage du joueur ---
-
-    player1.show(surf,screen)
-    player2.show(surf,screen)
-    AI1.show(surf,screen)
+    for player in players:
+        if player.est_vivant():
+            player.show(surf,screen)
 
     # Mouvement Joueur
-    player1.move(dt,keys,grille_du_jeu,1)
-    player2.move(dt,keys,grille_du_jeu,2)
-    AI1.moveAI(dt - 50,grille_du_jeu,player_pos,AI_pos)
+    for player in players:
+        if player.est_vivant():
+            player.move(dt,keys,grille_du_jeu)
     #Mouvement AI (test)
 
     # Mettre à jour l'affichage de l'écran
