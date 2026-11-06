@@ -113,7 +113,7 @@ while running:
 
 
     #Mouvement AI (test)
-    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) c'est pas au point zebi 
+    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) #c'est pas au point zebi 
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 
