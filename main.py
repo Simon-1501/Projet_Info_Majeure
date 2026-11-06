@@ -6,8 +6,13 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
+<<<<<<< HEAD
 from bombermanenv import BomberEnv
 from Ai import *
+=======
+from bomb import Bomb
+from AI import *
+>>>>>>> origin/main
 
 # Chargement modèles IA
 
@@ -73,6 +78,7 @@ player2 = pygame.transform.scale(player2, (70, 70))
 
 # Position initiale du joueur 
 player_pos = pygame.Vector2(70,70)
+<<<<<<< HEAD
 
 
 #Joueurs
@@ -80,6 +86,17 @@ players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z
            Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 
+=======
+player_speed = 300  # Vitesse en px/s
+AI_pos = pygame.Vector2(140,140)
+AI_speed = 250
+liste_bombes = []
+
+
+#Joueursd
+players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3, 1030-2*70, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
+>>>>>>> origin/main
 
 while running:
 
@@ -105,8 +122,6 @@ while running:
             tile.update(dt, grille_du_jeu)
 
     
-
-
     keys = pygame.key.get_pressed()
 
     
@@ -124,7 +139,7 @@ while running:
 
 
     #Mouvement AI (test)
-
+    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) c'est pas au point zebi 
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 
