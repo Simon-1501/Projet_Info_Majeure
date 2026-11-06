@@ -6,16 +6,9 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
-<<<<<<< HEAD
-from Ai import *
-=======
-<<<<<<< HEAD
+
 from bombermanenv import BomberEnv
-from Ai import *
-=======
-from bomb import Bomb
 from AI import *
->>>>>>> origin/main
 
 # Chargement modèles IA
 
@@ -25,7 +18,6 @@ tile_y = 70
 screen_size_x = 1050
 screen_size_y = 630
 
->>>>>>> origin/test_tile_statechart
 
 # pygame setup
 pygame.init()
@@ -77,12 +69,13 @@ bg_original = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg = pygame.transform.scale(bg_original, (screen_size_x, screen_size_y))
 player1 = pygame.transform.scale(player1, (70, 70)) 
 player2 = pygame.transform.scale(player2, (70, 70)) 
+AI1 = pygame.transform.scale(player2, (70, 70)) 
 
 
 
 # Position initiale du joueur 
 player_pos = pygame.Vector2(70,70)
-<<<<<<< HEAD
+AI_pos = pygame.Vector2(70,490)
 
 
 #Joueurs
@@ -90,21 +83,13 @@ players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z
            Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 
-=======
 player_speed = 300  # Vitesse en px/s
 
 liste_bombes = []
 
 
 #Joueursd
-<<<<<<< HEAD
-players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3,1030-2*70 , 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
-
-=======
-players = [Player('test', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player('Robot', 3, 1030-2*70, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
-AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
->>>>>>> origin/main
->>>>>>> origin/test_tile_statechart
+AI1 = AI(player2,'bot', 3, AI_pos.x, AI_pos.y)
 
 while running:
 
@@ -140,20 +125,21 @@ while running:
         running = False  # Quitter la boucle
 
 
-<<<<<<< HEAD
     # Joueur
-=======
-    # Joueure
->>>>>>> origin/test_tile_statechart
     for player in players:
         if player.est_vivant():
             player.show(screen)
             player.update(grille_du_jeu, dt)
             player.move(dt,keys,grille_du_jeu)
+    if AI1.est_vivant():
+        AI1.show(screen)
+        AI1.update(grille_du_jeu, dt)
+
 
 
     #Mouvement AI (test)
-    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) #c'est pas au point zebi 
+
+    AI1.moveAI(dt,(player_pos.x//70,player_pos.y//70),(AI_pos.x//70,AI_pos.y//70),grille_du_jeu) #c'est pas au point zebi 
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
 
