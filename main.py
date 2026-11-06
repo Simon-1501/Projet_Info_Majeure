@@ -86,8 +86,11 @@ player_speed = 300  # Vitesse en px/s
 
 
 
-#Joueursd
+#Joueurs
 #AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
+
+state = 'menu'
+
 
 while running:
 
@@ -98,45 +101,51 @@ while running:
             for player in players:
                 if event.key == player.keybomb and player.est_vivant():
                         grille_du_jeu[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
-
-    
-
     screen.fill("grey")
 
-    # Affichage du fond d'écran en premier
-    screen.blit(bg, (0, 0))
-    
+    if state == 'menu':
+        play_button = pygame.Rect(screen_size_x/2, screen_size_y/2, 100, 40)
+        pygame.draw.rect(screen, 'blue', player)
 
-    for ligne in grille_du_jeu:
-        for tile in ligne:
-            tile.draw(screen)
-            tile.update(dt, grille_du_jeu)
-
-    
+        pygame.display.flip()
 
 
-    keys = pygame.key.get_pressed()
+    elif state == '1v1':
 
-    
+        # Affichage du fond d'écran en premier
+        screen.blit(bg, (0, 0))
+        
 
-    if keys[pygame.K_e]:
-        running = False  # Quitter la boucle
+        for ligne in grille_du_jeu:
+            for tile in ligne:
+                tile.draw(screen)
+                tile.update(dt, grille_du_jeu)
 
-
-    # Joueur
-    for player in players:
-        if player.est_vivant():
-            player.show(screen)
-            player.update(grille_du_jeu, dt)
-            player.move(dt,keys,grille_du_jeu)
+        
 
 
-    #Mouvement AI (test)
-    #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) #c'est pas au point zebi 
-    # Mettre à jour l'affichage de l'écran
-    pygame.display.flip()
+        keys = pygame.key.get_pressed()
 
-    # Limite à 60 FPS et calcul du dt (en secondes)
-    dt = clock.tick(60) / 1000
+        
+
+        if keys[pygame.K_e]:
+            running = False  # Quitter la boucle
+
+
+        # Joueur
+        for player in players:
+            if player.est_vivant():
+                player.show(screen)
+                player.update(grille_du_jeu, dt)
+                player.move(dt,keys,grille_du_jeu)
+
+
+        #Mouvement AI (test)
+        #AI1.moveAI(grille_du_jeu,player_pos,AI_pos) #c'est pas au point zebi 
+        # Mettre à jour l'affichage de l'écran
+        pygame.display.flip()
+
+        # Limite à 60 FPS et calcul du dt (en secondes)
+        dt = clock.tick(60) / 1000
 
 pygame.quit()
