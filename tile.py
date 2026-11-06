@@ -27,7 +27,6 @@ class Tile(StateChart):
         self.timer = 0
         self.BOMB_DURATION = 2.0  # 2 secondes avant explosion
         self.FIRE_DURATION = 0.5   # 0.5 seconde de fire
-        self.fire_owners = set()
 
     def update(self, dt, grille, bomb_owners=None, explosion_events=None):
         if self.current_state == Tile.bomb:
