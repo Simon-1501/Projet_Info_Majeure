@@ -1,4 +1,5 @@
 import pygame
+from tile import Tile
 
 class Player:
     def __init__(self, sprite, nom, vie_max, x, y, keyup, keydown, keyleft, keyright, keybomb, object=None):
@@ -6,6 +7,9 @@ class Player:
         self.nom = nom
         self.vie_max = vie_max
         self.vie = vie_max
+
+
+        self.degats_recus_ce_tour = 0
 
         self.sprite = sprite
         
@@ -24,24 +28,35 @@ class Player:
         self.damage_timer = 0
 
     def est_vivant(self):
-        if self.vie > 0:
-            return True
+        return self.vie > 0
 
     def take_damages(self, damages):
-        self.vie -= damages
-        if self.vie <= 0:
-            self.vie = 0
+        vie_avant = self.vie
+
+        self.vie = max(0, self.vie - damages)
+
+        degats_reels = vie_avant - self.vie
+        self.degats_recus_ce_tour += degats_reels
 
     def update(self, grille, dt):
-        if self.damage_timer > 0:
-            self.damage_timer -= dt 
+        # Réinitialiser le compteur au début de chaque mise à jour.
+        self.degats_recus_ce_tour = 0
 
-        case_actuelle = grille[int(self.pos_grille[1])][int(self.pos_grille[0])]
-        
-        if case_actuelle.current_state.value == "fire":
-            if self.damage_timer <= 0: 
+        if not self.est_vivant():
+            return
+
+        if self.damage_timer > 0:
+            self.damage_timer -= dt
+
+        x = int(self.pos_grille[0])
+        y = int(self.pos_grille[1])
+
+        case_actuelle = grille[y][x]
+
+        if case_actuelle.current_state == Tile.fire:
+            if self.damage_timer <= 0:
                 self.take_damages(1)
-                self.damage_timer = 0.6 # Donne 0.6 seconde d'invincibilité 
+                self.damage_timer = 0.6
 
     def take_object(self, object):
         self.object = object

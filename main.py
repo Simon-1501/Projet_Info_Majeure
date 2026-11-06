@@ -2,12 +2,14 @@
 import pygame
 import os
 
+
 # Import des Classes
 from player import Player
 from tile import Tile
+from bombermanenv import BomberEnv
 from Ai import *
 
-
+# Chargement modèles IA
 
 #var
 tile_x = 70
@@ -26,7 +28,15 @@ dt = 0
 # map
 map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
+
 # creation grille de jeu
+
+codes_terrain = {Tile.passage: 0,
+                 Tile.mur: 1,
+                 Tile.mur_cassable: 2,
+                 Tile.bomb: 3,
+                 Tile.fire: 4
+                 }
 
 grille_du_jeu = []
 
@@ -65,11 +75,14 @@ player2 = pygame.transform.scale(player2, (70, 70))
 player_pos = pygame.Vector2(70,70)
 
 
-#Joueursd
-players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+#Joueurs
+players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+
 
 
 while running:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -77,11 +90,14 @@ while running:
             for player in players:
                 if event.key == player.keybomb and player.est_vivant():
                         grille_du_jeu[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
-            
+
+    
+
     screen.fill("grey")
 
     # Affichage du fond d'écran en premier
     screen.blit(bg, (0, 0))
+    
 
     for ligne in grille_du_jeu:
         for tile in ligne:
