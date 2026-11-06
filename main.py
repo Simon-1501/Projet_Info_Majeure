@@ -73,17 +73,17 @@ player2 = pygame.transform.scale(player2, (70, 70))
 
 
 # Position initiale du joueur 
-player_pos = pygame.Vector2(70,70)
+player1_pos = (1,1)
+player2_pos = (13,7)
 
 
 #Joueurs
-players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
-           Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+players = [Player(player1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(player2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 
 player_speed = 300  # Vitesse en px/s
 
-liste_bombes = []
 
 
 #Joueursd
