@@ -14,7 +14,7 @@ class Labyrinthe:
                     return (ligne, colonne)
 
     def est_libre(self, position):
-        """Vrai si la case existe et n'est pas un mur"""
+        """Vrai si la case existe et n'est pas un mur ou un mur cassable"""
         ligne, colonne = position
         if ligne < 0 or ligne >= len(self.grille):
             return False
