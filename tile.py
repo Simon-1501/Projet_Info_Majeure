@@ -1,4 +1,5 @@
 import pygame
+import os
 from statemachine import StateChart, State
 
 class Tile(StateChart):
@@ -27,6 +28,26 @@ class Tile(StateChart):
         self.range = 3
         self.timer = 0
         self.boost = boost
+
+        self.hebre_sprite = pygame.image.load(os.path.join('Sprites', 'herbe.png')).convert_alpha()
+        self.hebre_sprite = pygame.transform.scale(self.hebre_sprite, (70, 70)) 
+
+        self.cassable_sprite = pygame.image.load(os.path.join('Sprites', 'cassable.png')).convert_alpha()
+        self.cassable_sprite = pygame.transform.scale(self.cassable_sprite, (70, 70)) 
+
+        self.mur_sprite = pygame.image.load(os.path.join('Sprites', 'iron.png')).convert_alpha()
+        self.mur_sprite = pygame.transform.scale(self.mur_sprite, (70, 70)) 
+
+        self.bombe_sprite = pygame.image.load(os.path.join('Sprites', 'bomb.png')).convert_alpha()
+        self.bombe_sprite = pygame.transform.scale(self.bombe_sprite, (70, 70)) 
+
+        self.fire_sprite = pygame.image.load(os.path.join('Sprites', 'fire.png')).convert_alpha()
+        self.fire_sprite = pygame.transform.scale(self.fire_sprite, (70, 70)) 
+
+
+
+
+
 
         self.BOMB_DURATION = 2.0  # 2 secondes avant explosion
         self.FIRE_DURATION = 0.5   # 0.5 seconde de fire
@@ -90,11 +111,18 @@ class Tile(StateChart):
                     break
 
     def draw(self, screen):
-        couleurs = {
-            "mur": "Grey",
-            "mur_cassable": (115, 63, 17),
-            "passage": "Green",
-            "bomb": "Black",
-            "fire": "Red",
+        sprite = {
+            "mur": self.mur_sprite,
+            "mur_cassable": self.cassable_sprite,
+            "passage": self.hebre_sprite,
+            "bomb": self.bombe_sprite,
+            "fire": self.fire_sprite,
         }
-        pygame.draw.rect(screen, couleurs[self.current_state.value], self.rect)
+
+        screen.blit(sprite[self.current_state.value], self.rect)
+
+    def show(self, screen):
+        rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+        screen.blit(self.sprite, rect_joueur)
+
+

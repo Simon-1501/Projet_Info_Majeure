@@ -7,7 +7,7 @@ import os
 from player import Player
 from tile import Tile
 from Ai import *
-
+from button import Bouton
 
 
 # Chargement modèles IA
@@ -61,12 +61,17 @@ for y, ligne in enumerate(map):
 # chargement des images
 player1 = pygame.image.load(os.path.join('Sprites', 'PLAYER1.png')).convert_alpha()
 player2 = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
+boutton_play = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
 
-bg_original = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
+bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
+bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
+
 
 
 # Redimensionnement des images pour avoir un style pixélisé 
-bg = pygame.transform.scale(bg_original, (screen_size_x, screen_size_y))
+bg_menu = pygame.transform.scale(bg_original_menu, (screen_size_x, screen_size_y))
+bg_menu_choix = pygame.transform.scale(bg_original_menu_choix, (screen_size_x, screen_size_y))
+
 player1 = pygame.transform.scale(player1, (70, 70)) 
 player2 = pygame.transform.scale(player2, (70, 70)) 
 
@@ -86,34 +91,39 @@ player_speed = 300  # Vitesse en px/s
 
 
 
-#Joueurs
-#AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
-
-state = 'menu'
-
-
+state = '1v1'
+clic = False
+tap = False
 while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
+            tap = True
             for player in players:
                 if event.key == player.keybomb and player.est_vivant():
                         grille_du_jeu[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            tap = True
+            clic = True
+            clic_pos = pygame.mouse.get_pos()
     screen.fill("grey")
 
     if state == 'menu':
-        play_button = pygame.Rect(screen_size_x/2, screen_size_y/2, 100, 40)
-        pygame.draw.rect(screen, 'blue', player)
+        screen.blit(bg_menu,(0,0))
+        if tap == True:
+            state = 'menu choix mode de jeu'
+        pygame.display.flip()
 
+    elif state == 'menu choix mode de jeu':
+        screen.blit(bg_menu_choix,(0,0))
         pygame.display.flip()
 
 
     elif state == '1v1':
 
         # Affichage du fond d'écran en premier
-        screen.blit(bg, (0, 0))
         
 
         for ligne in grille_du_jeu:
@@ -149,3 +159,12 @@ while running:
         dt = clock.tick(60) / 1000
 
 pygame.quit()
+"""        buttons = [
+            Bouton((screen_size_x/2)-50, (screen_size_y/2)-20, 100, 40, boutton_play, 'menu choix mode de jeu')
+            ]
+
+        for button in buttons:
+            if clic:
+                if button.pos.x == clic_pos[0] and button.pos.y == clic_pos[1]:
+                    state = button.clic_state
+            button.draw(screen)"""
