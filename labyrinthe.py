@@ -41,7 +41,6 @@ class Labyrinthe:
                     texte += "."
                 else:
                     texte += self.grille[ligne][colonne]
-            print(texte)
 
 def graphe_du_labyrinthe(labyrinthe):
     """Renvoie le graphe des cases libres : {case: liste des cases voisines libres}"""

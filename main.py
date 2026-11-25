@@ -91,7 +91,7 @@ player_speed = 300  # Vitesse en px/s
 
 
 
-state = '1v1'
+state = 'menu'
 clic = False
 tap = False
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
@@ -110,22 +110,28 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             tap = True
             clic = True
-            clic_pos = pygame.mouse.get_pos()
+            clic_posx, clic_posy = pygame.mouse.get_pos()
     screen.fill("grey")
 
     if state == 'menu':
         screen.blit(bg_menu,(0,0))
-        if tap == True:
+        if tap:
             state = 'menu choix mode de jeu'
         pygame.display.flip()
 
     elif state == 'menu choix mode de jeu':
         screen.blit(bg_menu_choix,(0,0))
-        pygame.display.flip()
+        if clic:
+            if clic_posx >=980 and clic_posy <= 70:
+                running = False
+            elif 630>=clic_posx>=420 and 140<=clic_posy<= 280:
+                state = '1v1'
+            
+            pygame.display.flip()
+
+
 
     elif state == '1v1':
-        
-
         for ligne in grille_du_jeu:
             for tile in ligne:
                 tile.draw(screen)
@@ -150,7 +156,7 @@ while running:
 
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
-    """if state == 'PVE':
+    if state == 'PVE':
                        
         for ligne in grille_du_jeu:
             for tile in ligne:
@@ -182,14 +188,5 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
 
-"""
-pygame.quit()
-"""        buttons = [
-            Bouton((screen_size_x/2)-50, (screen_size_y/2)-20, 100, 40, boutton_play, 'menu choix mode de jeu')
-            ]
 
-        for button in buttons:
-            if clic:
-                if button.pos.x == clic_pos[0] and button.pos.y == clic_pos[1]:
-                    state = button.clic_state
-            button.draw(screen)"""
+pygame.quit()

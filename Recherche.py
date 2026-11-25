@@ -15,7 +15,6 @@ carte = ["###############",
 
 carte = Labyrinthe(carte)
 graphe_carte = graphe_du_labyrinthe(carte)
-print(graphe_carte)
 
 """Arcs valués"""
 for i in graphe_carte:
