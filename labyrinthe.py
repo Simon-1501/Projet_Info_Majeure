@@ -51,7 +51,7 @@ def graphe_du_labyrinthe(labyrinthe):
         for colonne in range(len(labyrinthe.grille[ligne])):
             case = (ligne, colonne)
             if labyrinthe.est_libre(case):
-                graphe[case] = labyrinthe.voisines(case)
+                graphe[case[1],case[0]] = labyrinthe.voisines(case)
 
 
     return graphe

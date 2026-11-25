@@ -58,7 +58,7 @@ class AI:
         self.object = object
 
     def moveAI(self, dt, arrive, depart, grille):
-        p = dijkstra(graphe_carte,depart)[1]
+        p = dijkstra_hpq(graphe_carte,depart)[1]
         Chemin = reconstruire_chemin(depart,arrive,p)
         prochaine_case = Chemin[0]
         if self.move_timer > 0:

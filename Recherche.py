@@ -1,4 +1,5 @@
 from labyrinthe import *
+import heapq
 
 """Legende : '#' = mur incassable, '+' = mur cassable, ' ' = chemin """
 
@@ -20,7 +21,7 @@ print(graphe_carte)
 for i in graphe_carte:
     for j in range(len(graphe_carte[i])):
         T = graphe_carte[i][j]
-        graphe_carte[i][j] = ((T[0],T[1]),1)
+        graphe_carte[i][j] = ((T[1],T[0]),1)
 #print(graphe_carte)
 
 def arc_sortant_min(g, M, d):
@@ -37,6 +38,24 @@ def arc_sortant_min(g, M, d):
     if dmin == None:
         return None
     return (xmin, ymin, dmin)
+
+def dijkstra_hpq(g, s):
+    d = {}
+    d[s] = 0
+    M = [(0, s)]
+    p = {}
+    while M:
+        dist_x, x = heapq.heappop(M)
+        if x not in d:
+            d[x] = dist_x
+        if dist_x <= d[x]:
+            for y, l in g.get(x, []):
+                nouvelle_dist = dist_x + l
+                if y not in d or nouvelle_dist < d[y]:
+                    d[y] = nouvelle_dist
+                    p[y] = x
+                    heapq.heappush(M, (nouvelle_dist, y))
+    return d,p
 
 def dijkstra(g,s):
     #s = [s.x,s.y]

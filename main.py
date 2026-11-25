@@ -166,7 +166,7 @@ while running:
         
         AI1.moveAI(dt,(player1_pos[0],player1_pos[1]),(AI_pos[0],AI_pos[1]),grille_du_jeu) #c'est pas au point zebi 
 
-         # Mettre à jour l'affichage de l'écran
+        #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
         
         # Limite à 60 FPS et calcul du dt (en secondes)
