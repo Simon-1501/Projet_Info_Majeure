@@ -38,7 +38,6 @@ dt = 0
 # map
 map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,0,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,0,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-
 # creation grille de jeu
 
 codes_terrain = {Tile.passage: 0,
@@ -146,6 +145,7 @@ while running:
                 tile.update(dt, grille_du_jeu)
 
     # Mettre à jour l'affichage de l'écran
+       
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_e]:
@@ -173,6 +173,7 @@ while running:
                 tile.update(dt, grille_du_jeu)
         
             # Mettre à jour l'affichage de l'écran
+        
         keys = pygame.key.get_pressed()
                
         if keys[pygame.K_e]:
@@ -189,7 +190,7 @@ while running:
 
         #Mouvement AI (test)
         
-        AI1.moveAI(dt,(player1_pos[0],player1_pos[1]),(AI_pos[0],AI_pos[1]),grille_du_jeu) #c'est pas au point zebi 
+        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
 
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
