@@ -29,7 +29,6 @@ dt = 0
 # map
 map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,2,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-
 # creation grille de jeu
 
 codes_terrain = {Tile.passage: 0,
@@ -57,7 +56,6 @@ for y, ligne in enumerate(map):
         
     grille_du_jeu.append(ligne_de_tiles)
 
-
 # chargement des images
 player1 = pygame.image.load(os.path.join('Sprites', 'PLAYER1.png')).convert_alpha()
 player2 = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
@@ -66,8 +64,6 @@ boutton_play = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert
 bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
 
-
-
 # Redimensionnement des images pour avoir un style pixélisé 
 bg_menu = pygame.transform.scale(bg_original_menu, (screen_size_x, screen_size_y))
 bg_menu_choix = pygame.transform.scale(bg_original_menu_choix, (screen_size_x, screen_size_y))
@@ -75,8 +71,6 @@ bg_menu_choix = pygame.transform.scale(bg_original_menu_choix, (screen_size_x, s
 player1 = pygame.transform.scale(player1, (70, 70)) 
 player2 = pygame.transform.scale(player2, (70, 70)) 
 AI1 = pygame.transform.scale(player2, (70, 70)) 
-
-
 
 # Position initiale du joueur 
 player1_pos = (1,1)
@@ -89,14 +83,11 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
 
 player_speed = 300  # Vitesse en px/s
 
-
-
-state = 'menu'
+state = '1v1'
 clic = False
 tap = False
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
 #Joueurs
-
 
 while running:
 
@@ -187,7 +178,7 @@ while running:
 
         #Mouvement AI (test)
         
-        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est pas au point zebi 
+        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
 
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
