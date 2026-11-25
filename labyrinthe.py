@@ -53,4 +53,5 @@ def graphe_du_labyrinthe(labyrinthe):
             if labyrinthe.est_libre(case):
                 graphe[case] = labyrinthe.voisines(case)
 
+
     return graphe

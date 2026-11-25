@@ -14,7 +14,7 @@ carte = ["###############",
 
 carte = Labyrinthe(carte)
 graphe_carte = graphe_du_labyrinthe(carte)
-
+print(graphe_carte)
 
 """Arcs valués"""
 for i in graphe_carte:
@@ -52,7 +52,7 @@ def dijkstra(g,s):
         arc_choisi = arc_sortant_min(g,M,d)
     return (M,p,d)
 
-print(dijkstra(graphe_carte, (1,1))[1])
+#print(dijkstra(graphe_carte, (1,1))[1])
 
 def reconstruire_chemin(s,t,p):
     c = [t]
