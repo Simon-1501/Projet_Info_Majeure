@@ -6,9 +6,9 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
-
-from bombermanenv import BomberEnv
 from AI import *
+
+
 
 # Chargement modèles IA
 
@@ -74,22 +74,22 @@ AI1 = pygame.transform.scale(player2, (70, 70))
 
 
 # Position initiale du joueur 
-player_pos = pygame.Vector2(70,70)
-AI_pos = pygame.Vector2(70,490)
-
+player1_pos = (1,1)
+player2_pos = (13,7)
+AI_pos = (13,7)
 
 #Joueurs
-players = [Player(player1, 'Joueur 1', 3, player_pos.x, player_pos.y, pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
-           Player(player2, 'Joueur 2', 3,910, 70, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
-
+players = [Player(player1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(player2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 player_speed = 300  # Vitesse en px/s
 
-liste_bombes = []
-
-
 #Joueursd
-AI1 = AI(player2,'bot', 3, AI_pos.x, AI_pos.y)
+AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
+#Joueurs
+#AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
+
+state = 'PVE'
 
 while running:
 
@@ -100,50 +100,77 @@ while running:
             for player in players:
                 if event.key == player.keybomb and player.est_vivant():
                         grille_du_jeu[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
-
-    
-
     screen.fill("grey")
 
-    # Affichage du fond d'écran en premier
-    screen.blit(bg, (0, 0))
-    
+    if state == 'menu':
+        play_button = pygame.Rect(screen_size_x/2, screen_size_y/2, 100, 40)
+        #pygame.draw.rect(screen, 'blue', player)
 
-    for ligne in grille_du_jeu:
-        for tile in ligne:
-            tile.draw(screen)
-            tile.update(dt, grille_du_jeu)
+        pygame.display.flip()
 
-    
+    elif state == '1v1':
 
+        # Affichage du fond d'écran en premier
+        screen.blit(bg, (0, 0))
+        
+        for ligne in grille_du_jeu:
+            for tile in ligne:
+                tile.draw(screen)
+                tile.update(dt, grille_du_jeu)
 
-    keys = pygame.key.get_pressed()
-
-    
-
-    if keys[pygame.K_e]:
-        running = False  # Quitter la boucle
-
-
-    # Joueur
-    for player in players:
-        if player.est_vivant():
-            player.show(screen)
-            player.update(grille_du_jeu, dt)
-            player.move(dt,keys,grille_du_jeu)
-    if AI1.est_vivant():
-        AI1.show(screen)
-        AI1.update(grille_du_jeu, dt)
-
-
-
-    #Mouvement AI (test)
-
-    AI1.moveAI(dt,(player_pos.x//70,player_pos.y//70),(AI_pos.x//70,AI_pos.y//70),grille_du_jeu) #c'est pas au point zebi 
     # Mettre à jour l'affichage de l'écran
-    pygame.display.flip()
+        pygame.display.flip()
+        keys = pygame.key.get_pressed()
 
-    # Limite à 60 FPS et calcul du dt (en secondes)
-    dt = clock.tick(60) / 1000
+        if keys[pygame.K_e]:
+            running = False  # Quitter la boucle
+
+        # Joueur
+        for player in players:
+            if player.est_vivant():
+                player.show(screen)
+                player.update(grille_du_jeu, dt)
+                player.move(dt,keys,grille_du_jeu)
+        
+        # Mettre à jour l'affichage de l'écran
+        pygame.display.flip()
+
+        # Limite à 60 FPS et calcul du dt (en secondes)
+        dt = clock.tick(60) / 1000
+    if state == 'PVE':
+        # Affichage du fond d'écran en premier
+        screen.blit(bg, (0, 0))
+                       
+        for ligne in grille_du_jeu:
+            for tile in ligne:
+                tile.draw(screen)
+                tile.update(dt, grille_du_jeu)
+        
+            # Mettre à jour l'affichage de l'écran
+        pygame.display.flip()
+        keys = pygame.key.get_pressed()
+               
+        if keys[pygame.K_e]:
+            running = False  # Quitter la boucle
+
+        if AI1.est_vivant():
+            AI1.show(screen)
+            AI1.update(grille_du_jeu, dt)
+
+        if players[0].est_vivant():
+            players[0].show(screen)
+            players[0].update(grille_du_jeu,dt)
+            players[0].move(dt, keys, grille_du_jeu)
+
+        #Mouvement AI (test)
+        
+        AI1.moveAI(dt,(player1_pos[0],player1_pos[1]),(AI_pos[0],AI_pos[1]),grille_du_jeu) #c'est pas au point zebi 
+
+         # Mettre à jour l'affichage de l'écran
+        pygame.display.flip()
+        
+        # Limite à 60 FPS et calcul du dt (en secondes)
+        dt = clock.tick(60) / 1000
+
 
 pygame.quit()
