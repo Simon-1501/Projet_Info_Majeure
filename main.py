@@ -6,7 +6,7 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
-from Ai import *
+from AI import *
 from button import Bouton
 
 
@@ -89,15 +89,11 @@ players = [Player(player1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame
 
 player_speed = 300  # Vitesse en px/s
 
-
-
-state = '1v1'
 clic = False
 tap = False
 #Joueursd
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
 #Joueurs
-#AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
 
 state = 'PVE'
 
@@ -130,8 +126,6 @@ while running:
     elif state == '1v1':
 
         # Affichage du fond d'écran en premier
-        screen.blit(bg, (0, 0))
-        
 
         for ligne in grille_du_jeu:
             for tile in ligne:
@@ -139,7 +133,7 @@ while running:
                 tile.update(dt, grille_du_jeu)
 
     # Mettre à jour l'affichage de l'écran
-        pygame.display.flip()
+       
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_e]:
@@ -159,7 +153,6 @@ while running:
         dt = clock.tick(60) / 1000
     if state == 'PVE':
         # Affichage du fond d'écran en premier
-        screen.blit(bg, (0, 0))
                        
         for ligne in grille_du_jeu:
             for tile in ligne:
@@ -167,7 +160,7 @@ while running:
                 tile.update(dt, grille_du_jeu)
         
             # Mettre à jour l'affichage de l'écran
-        pygame.display.flip()
+        
         keys = pygame.key.get_pressed()
                
         if keys[pygame.K_e]:
@@ -184,7 +177,7 @@ while running:
 
         #Mouvement AI (test)
         
-        AI1.moveAI(dt,(player1_pos[0],player1_pos[1]),(AI_pos[0],AI_pos[1]),grille_du_jeu) #c'est pas au point zebi 
+        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est pas au point zebi 
 
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
