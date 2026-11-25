@@ -1,8 +1,9 @@
 import pygame
 from tile import Tile
+import os
 
 class Player:
-    def __init__(self, sprite, nom, vie_max, grille_x, grille_y, keyup, keydown, keyleft, keyright, keybomb, object=None):
+    def __init__(self, color, nom, vie_max, grille_x, grille_y, keyup, keydown, keyleft, keyright, keybomb, object=None):
         self.object = object
         self.nom = nom
         self.vie_max = vie_max
@@ -11,8 +12,28 @@ class Player:
 
         self.degats_recus_ce_tour = False
 
-        self.sprite = sprite
-        
+        if color == 1:
+            self.sprite_3 = pygame.image.load(os.path.join('Sprites', 'PLAYER1.png')).convert_alpha()
+            self.sprite_3 = pygame.transform.scale(self.sprite_3, (70, 70)) 
+
+            self.sprite_2 = pygame.image.load(os.path.join('Sprites', '2hp.png')).convert_alpha()
+            self.sprite_2 = pygame.transform.scale(self.sprite_2, (70, 70)) 
+
+            self.sprite_1 = pygame.image.load(os.path.join('Sprites', '1hp.png')).convert_alpha()
+            self.sprite_1 = pygame.transform.scale(self.sprite_1, (70, 70)) 
+
+        else:
+            self.sprite_3 = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
+            self.sprite_3 = pygame.transform.scale(self.sprite_3, (70, 70)) 
+            
+            self.sprite_2 = pygame.image.load(os.path.join('Sprites', '2h2.png')).convert_alpha()
+            self.sprite_2 = pygame.transform.scale(self.sprite_2, (70, 70)) 
+            
+            self.sprite_1 = pygame.image.load(os.path.join('Sprites', '1hp2.png')).convert_alpha()
+            self.sprite_1 = pygame.transform.scale(self.sprite_1, (70, 70)) 
+            
+
+
         self.pos_grille = [grille_x, grille_y]
         self.pos = pygame.Vector2(grille_x*70, grille_y*70)
         self.rect = pygame.Rect(self.pos.x, self.pos.y, 40, 50)
@@ -101,5 +122,14 @@ class Player:
 
 
     def show(self, screen):
-        rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
-        screen.blit(self.sprite, rect_joueur)
+        if self.vie == 3:
+            rect_joueur = self.sprite_3.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite_3, rect_joueur)
+            
+        elif self.vie == 2:
+            rect_joueur = self.sprite_2.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite_2, rect_joueur)
+            
+        elif self.vie == 1:
+            rect_joueur = self.sprite_1.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite_1, rect_joueur)

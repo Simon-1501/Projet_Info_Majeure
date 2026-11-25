@@ -84,18 +84,19 @@ player2_pos = (13,7)
 AI_pos = (13,7)
 
 #Joueurs
-players = [Player(player1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
-           Player(player2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 player_speed = 300  # Vitesse en px/s
 
+
+
+state = 'menu'
 clic = False
 tap = False
-#Joueursd
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
 #Joueurs
 
-state = 'PVE'
 
 while running:
 
@@ -110,18 +111,26 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             tap = True
             clic = True
-            clic_pos = pygame.mouse.get_pos()
+            clic_posx, clic_posy = pygame.mouse.get_pos()
     screen.fill("grey")
 
     if state == 'menu':
         screen.blit(bg_menu,(0,0))
-        if tap == True:
+        if tap:
             state = 'menu choix mode de jeu'
         pygame.display.flip()
 
     elif state == 'menu choix mode de jeu':
         screen.blit(bg_menu_choix,(0,0))
-        pygame.display.flip()
+        if clic:
+            if clic_posx >=980 and clic_posy <= 70:
+                running = False
+            elif 630>=clic_posx>=420 and 140<=clic_posy<= 280:
+                state = '1v1'
+            
+            pygame.display.flip()
+
+
 
     elif state == '1v1':
 
@@ -142,9 +151,10 @@ while running:
         # Joueur
         for player in players:
             if player.est_vivant():
-                player.show(screen)
                 player.update(grille_du_jeu, dt)
                 player.move(dt,keys,grille_du_jeu)
+                player.show(screen)
+
         
         # Mettre à jour l'affichage de l'écran
         pygame.display.flip()
@@ -187,12 +197,3 @@ while running:
 
 
 pygame.quit()
-"""        buttons = [
-            Bouton((screen_size_x/2)-50, (screen_size_y/2)-20, 100, 40, boutton_play, 'menu choix mode de jeu')
-            ]
-
-        for button in buttons:
-            if clic:
-                if button.pos.x == clic_pos[0] and button.pos.y == clic_pos[1]:
-                    state = button.clic_state
-            button.draw(screen)"""
