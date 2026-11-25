@@ -84,8 +84,8 @@ player2_pos = (13,7)
 AI_pos = (13,7)
 
 #Joueurs
-players = [Player(player1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
-           Player(player2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 player_speed = 300  # Vitesse en px/s
 
@@ -94,12 +94,8 @@ player_speed = 300  # Vitesse en px/s
 state = '1v1'
 clic = False
 tap = False
-#Joueursd
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
-#Joueurs
-#AI1 = AI('bot', 3, AI_pos.x, AI_pos.y)
 
-state = 'PVE'
 
 while running:
 
@@ -128,9 +124,6 @@ while running:
         pygame.display.flip()
 
     elif state == '1v1':
-
-        # Affichage du fond d'écran en premier
-        screen.blit(bg, (0, 0))
         
 
         for ligne in grille_du_jeu:
@@ -139,7 +132,6 @@ while running:
                 tile.update(dt, grille_du_jeu)
 
     # Mettre à jour l'affichage de l'écran
-        pygame.display.flip()
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_e]:
@@ -148,18 +140,17 @@ while running:
         # Joueur
         for player in players:
             if player.est_vivant():
-                player.show(screen)
                 player.update(grille_du_jeu, dt)
                 player.move(dt,keys,grille_du_jeu)
+                player.show(screen)
+
         
         # Mettre à jour l'affichage de l'écran
         pygame.display.flip()
 
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
-    if state == 'PVE':
-        # Affichage du fond d'écran en premier
-        screen.blit(bg, (0, 0))
+    """if state == 'PVE':
                        
         for ligne in grille_du_jeu:
             for tile in ligne:
@@ -167,7 +158,6 @@ while running:
                 tile.update(dt, grille_du_jeu)
         
             # Mettre à jour l'affichage de l'écran
-        pygame.display.flip()
         keys = pygame.key.get_pressed()
                
         if keys[pygame.K_e]:
@@ -192,7 +182,7 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
 
-
+"""
 pygame.quit()
 """        buttons = [
             Bouton((screen_size_x/2)-50, (screen_size_y/2)-20, 100, 40, boutton_play, 'menu choix mode de jeu')
