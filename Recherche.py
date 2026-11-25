@@ -1,53 +1,77 @@
 from labyrinthe import *
+import heapq
 
 """Legende : '#' = mur incassable, '+' = mur cassable, ' ' = chemin """
 
 carte = ["###############",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
-         "# + + + + + + #",
-         "#             #",
+         "#  +++++++++  #",
+         "# #+#+#+#+#+# #",
+         "#+++++++++++++#",
+         "#+#+#+#+#+#+#+#",
+         "#+++++++++++++#",
+         "# #+#+#+#+#+# #",
+         "#  +++++++++  #",
          "###############"]
 
 carte = Labyrinthe(carte)
 graphe_carte = graphe_du_labyrinthe(carte)
-
+print(graphe_carte)
 
 """Arcs valués"""
 for i in graphe_carte:
     for j in range(len(graphe_carte[i])):
         T = graphe_carte[i][j]
-        graphe_carte[i][j] = ((T[0],T[1]),1)
+        graphe_carte[i][j] = ((T[1],T[0]),1)
 #print(graphe_carte)
 
-def arc_sortant_min(g,M,d):
-    d_min = float('inf')
+def arc_sortant_min(g, M, d):
+    dmin = None
+    xmin = None
+    ymin = None
     for x in M:
-        for y,l in g[x]:
+        for (y,l) in g[x]:
             if y not in M:
-                if d[x] + l < d_min:
-                    d_min=d[x]+l
-                    x_min = x
-                    y_min = y
-    if d_min < float('inf'):
-        return x_min,y_min,d_min
-    return None
+                if dmin == None or d[x] + l < dmin:
+                    dmin = d[x]+l
+                    xmin = x
+                    ymin = y
+    if dmin == None:
+        return None
+    return (xmin, ymin, dmin)
+
+def dijkstra_hpq(g, s):
+    d = {}
+    d[s] = 0
+    M = [(0, s)]
+    p = {}
+    while M:
+        dist_x, x = heapq.heappop(M)
+        if x not in d:
+            d[x] = dist_x
+        if dist_x <= d[x]:
+            for y, l in g.get(x, []):
+                nouvelle_dist = dist_x + l
+                if y not in d or nouvelle_dist < d[y]:
+                    d[y] = nouvelle_dist
+                    p[y] = x
+                    heapq.heappush(M, (nouvelle_dist, y))
+    return d,p
 
 def dijkstra(g,s):
+    #s = [s.x,s.y]
     M = [s]
-    d = {s:0}
     p = {}
-    while arc_sortant_min(g,M,d):
-        x,y,l = arc_sortant_min(g,M,d)    
+    d = {s:0}
+    arc_choisi = arc_sortant_min(g,M,d)
+    while arc_choisi != None:
+        x,y,dmin = arc_choisi
         M.append(y)
+        d[y] = dmin
         p[y] = x
-        d[y] = d[x] + l
-    return(M,d,p)
+        arc_choisi = arc_sortant_min(g,M,d)
+    return (M,p,d)
 
-#print(dijkstra(graphe_carte, (1,1)))
+#print(dijkstra(graphe_carte, (1,1))[1])
 
 def reconstruire_chemin(s,t,p):
     c = [t]
