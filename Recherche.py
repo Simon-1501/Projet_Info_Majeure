@@ -10,7 +10,6 @@ def arc_sortant_min(g, M, d):
     xmin = None
     ymin = None
     for x in M:
-        print(g)
         for (y,l) in g[x]:
             y = (y[1],y[0])
             if y not in M:
@@ -39,13 +38,14 @@ def dijkstra(g,s):
 #print(dijkstra(graphe_carte, (1,1))[1])
 
 def reconstruire_chemin(s,t,p):
-    if s not in p or t == s:
+    if s not in p.values() or t == s:
         return []
     c = [t]
     while t!=s:
         t = p[t]
         c.append(t)
     c.reverse()
+    #print(c)
     return c
 
 def parcours_largeur(graphe, depart):
