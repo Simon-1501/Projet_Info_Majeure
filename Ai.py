@@ -1,6 +1,6 @@
 import pygame
 from tile import Tile
-from Recherche import *
+from Recherche_Boss import *
 import os
 
 
