@@ -60,9 +60,9 @@ class AI:
     def take_object(self, object):
         self.object = object
 
-    def moveAI(self, dt, arrive, depart, grille):
+    def moveAI(self, dt, arrive, depart, grille, g):
 
-        p = dijkstra(grille,depart)[1]
+        p = dijkstra(g,depart)[1]
         Chemin = reconstruire_chemin(depart,arrive,p)
         prochaine_case = Chemin[1]
         if self.move_timer > 0:
