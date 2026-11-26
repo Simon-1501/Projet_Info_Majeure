@@ -65,5 +65,6 @@ def reconstruire_chemin(s,t,p):
     while t!=s:
         t = p[t]
         c.append(t)
+    print(c)
     c.reverse()
     return c

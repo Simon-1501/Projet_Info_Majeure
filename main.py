@@ -195,9 +195,10 @@ while running:
             players[0].move(dt, keys, grille_du_jeu)
 
         #Mouvement AI (test)
-        g = creer_graph_boss(grille_du_jeu)
-        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu,g) #c'est au point zebi 
-
+        if (players[0].pos_grille[0],players[0].pos_grille[1]) != (AI1.pos_grille[0],AI1.pos_grille[1]):
+            AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
+        else:
+            players[0].take_damages(1)
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
         
