@@ -27,7 +27,7 @@ class Boss:
         self.damage_timer = 0
         self.bomb_timer = 0
         self.BOMB_COOLDOWN = 3.0    # Temps d'attente entre deux poses de bombe
-        self.portee_bombe = 2       # Distance en cases pour poser une bombe
+        self.portee_bombe = 3       # Distance en cases pour poser une bombe
 
     def est_vivant(self):
         return self.vie > 0
@@ -124,11 +124,13 @@ class Boss:
             else:
                 self.move_timer = 0
 
-        depart = (int(self.pos_grille[1]), int(self.pos_grille[0]))      # (ligne, col)
-        arrive = (int(pos_joueur[1]), int(pos_joueur[0]))                # (ligne, col)
+        depart = (int(self.pos_grille[0]), int(self.pos_grille[1]))      # (ligne, col)
+        arrive = (int(pos_joueur[0]), int(pos_joueur[1]))                # (ligne, col)
 
         M, p, d = dijkstra(graphe_carte, depart)
+        print(p)
         chemin = reconstruire_chemin(depart, arrive, p)
+        print(chemin)
 
         if len(chemin) == 0:
         # S'il est bloqué par des murs cassables et que son timer est prêt, il pose une bombe !
@@ -144,6 +146,7 @@ class Boss:
             return None
 
         self._deplacer_vers_case(prochaine_case, grille)
+        return 'déplacé'
 
 
     # Methode interne de déplacement du boss, C'est pour faire le déplacement sur un tour (en combiner plusieurs permet un déplacement complet)

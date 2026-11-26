@@ -272,7 +272,9 @@ while running:
             # 3. Sinon -> Se rapprocher du joueur (Dijkstra)
             else:
                 boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe, cases_dangereuses)
+                print(boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe, cases_dangereuses))
             boss.show(screen)
+            
 
 
 
