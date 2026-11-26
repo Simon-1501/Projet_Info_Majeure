@@ -10,17 +10,17 @@ def creer_graph_boss(grille):
 
     for ligne in range(nb_lignes):
         for colonne in range(nb_colonnes):
-            case = (ligne, colonne)
+            case = (colonne, ligne)
             voisins = []
 
-            for dl, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            for dc, dl in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 nl = ligne + dl
                 nc = colonne + dc
 
                 # On vérifie que le voisin est bien dans les limites de la grille
                 if 0 <= nl < nb_lignes and 0 <= nc < nb_colonnes:
                     if grille[nl][nc].current_state.value in ["fire", "passage"]:
-                        voisins.append(((nl, nc), 1))
+                        voisins.append(((nc, nl), 1))
 
             graphe[case] = voisins
     return graphe
@@ -58,7 +58,8 @@ def dijkstra(g,s):
 
 
 def reconstruire_chemin(s,t,p):
-    if s not in p or t == s:
+    print(s,t)
+    if s not in p.values() or t == s:
         return []
     c = [t]
     while t!=s:
