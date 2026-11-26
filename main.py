@@ -234,7 +234,7 @@ while running:
                     if players[0].damage_timer <= 0:
                         players[0].take_damages(1)
         if Ai_spawn_delay <= 0 and nb_active_AI < 5:
-            Ai_spawn_delay = 20
+            Ai_spawn_delay = 30
             AI_active.append(AIs[len(AI_active)])
             nb_active_AI += 1
         else :
