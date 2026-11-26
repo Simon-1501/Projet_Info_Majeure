@@ -62,8 +62,10 @@ class AI:
 
     def moveAI(self, dt, arrive, depart, grille, g):
 
-        p = dijkstra(g,depart)[1]
+        M,p,d = dijkstra(g,depart)
         #print(p)
+        if arrive not in M:
+            return None
         Chemin = reconstruire_chemin(depart,arrive,p)
         if Chemin[0] == depart:
             prochaine_case = Chemin[1]

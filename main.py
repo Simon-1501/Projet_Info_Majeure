@@ -92,7 +92,6 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
 AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
 boss = Boss('boss',3,AI_pos[0], AI_pos[1])
 
-state = 'PVE'
 clic = False
 tap = False
 AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])

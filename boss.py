@@ -129,6 +129,9 @@ class Boss:
 
         M, p, d = dijkstra(graphe_carte, depart)
         print(p)
+        chemin = []
+        if arrive not in M:
+            return None
         chemin = reconstruire_chemin(depart, arrive, p)
         print(chemin)
 
