@@ -216,6 +216,8 @@ while running:
             if Ai.est_vivant():
                 Ai.show(screen)
                 Ai.update(grille_du_jeu1, dt)
+            else:
+                state = 'boss'
 
         #Mouvement AI (test)
                 if (players[0].pos_grille[0],players[0].pos_grille[1]) != (Ai.pos_grille[0],Ai.pos_grille[1]):
