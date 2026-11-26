@@ -59,65 +59,50 @@ codes_terrain = {Tile.passage: 0,
                  Tile.fire: 4
                  }
 
-grille_du_jeu = []
-grille_du_jeu1 = []
+def creer_grille(map):
+    grille_du_jeu = []
+    for y, ligne in enumerate(map):
+        ligne_de_tiles = []
+        for x, valeur in enumerate(ligne):
+            # On passe la position en pixels ET les index x, y de la matrice
+            nouvelle_tile = Tile(x*tile_x, y*tile_y, x, y) 
+            
+            # 1 = mur, 2 = mur_cassable, sinon passage
+            if valeur == 1:
+                nouvelle_tile.send("build")
+            elif valeur == 2:
+                nouvelle_tile.send("build_cassable")
 
-for y, ligne in enumerate(map):
-    ligne_de_tiles = []
-    for x, valeur in enumerate(ligne):
-        # On passe la position en pixels ET les index x, y de la matrice
-        nouvelle_tile = Tile(x*tile_x, y*tile_y, x, y) 
-        
-        # 1 = mur, 2 = mur_cassable, sinon passage
-        if valeur == 1:
-            nouvelle_tile.send("build")
-        elif valeur == 2:
-            nouvelle_tile.send("build_cassable")
+            ligne_de_tiles.append(nouvelle_tile)
+            
+        grille_du_jeu.append(ligne_de_tiles)
+    return grille_du_jeu
 
-        ligne_de_tiles.append(nouvelle_tile)
-        
-    grille_du_jeu.append(ligne_de_tiles)
+grille_du_jeu = creer_grille(map)
+grille_du_jeu1 = creer_grille(map1)
 
-nb_lignes = len(grille_du_jeu)
-nb_colonnes = len(grille_du_jeu[0])
-
-for y, ligne in enumerate(map1):
-    ligne_de_tiles1 = []
-    for x, valeur in enumerate(ligne):
-        # On passe la position en pixels ET les index x, y de la matrice
-        nouvelle_tile = Tile(x*tile_x, y*tile_y, x, y) 
-        
-        # 1 = mur, 2 = mur_cassable, sinon passage
-        if valeur == 1:
-            nouvelle_tile.send("build")
-        elif valeur == 2:
-            nouvelle_tile.send("build_cassable")
-
-        ligne_de_tiles1.append(nouvelle_tile)
-        
-    grille_du_jeu1.append(ligne_de_tiles1)
 
 bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
+bg_original_victory = pygame.image.load(os.path.join('Sprites', 'victory.png')).convert()
 
 #on charge les backgrounds
 
 # Redimensionnement des images pour avoir la bonne taille
 bg_menu = pygame.transform.scale(bg_original_menu, (screen_size_x, screen_size_y))
 bg_menu_choix = pygame.transform.scale(bg_original_menu_choix, (screen_size_x, screen_size_y))
+bg_victory = pygame.transform.scale(bg_original_victory, (screen_size_x, screen_size_y))
 
-#Joueurs
-players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
-           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
-#IA
-AIs = [AI('AI0', 3, AI_pos[0], AI_pos[1]),AI('AI1', 5, AI_pos[0], AI_pos[1]),AI('AI2', 4, AI_pos[0], AI_pos[1]),AI('AI3', 2, AI_pos[0], AI_pos[1]),AI('AI4', 1, AI_pos[0], AI_pos[1])]
-AI_active = [AIs[0]]
-boss = Boss('boss',3,AI_pos[0], AI_pos[1])
+
 
 clic = False
 tap = False
 #Joueurs
+players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+
+
 
 while running:
 #on doit d'abord récupérer les événements depuis le dernier tour. ici on regarde principalement si il y a eu un clic (pour les boutons), et les bombes posées
@@ -145,18 +130,29 @@ while running:
         if tap:
             state = 'menu choix mode de jeu'
         pygame.display.flip()
+    
+    if state == 'victory':
+        screen.blit(bg_victory,(0,0)) 
+        if clic:
+            state = 'menu choix mode de jeu'
+        pygame.display.flip()
 
     elif state == 'menu choix mode de jeu': #pas vraiment des boutons, on regarde si il y a eu un clic (event), et où
         screen.blit(bg_menu_choix,(0,0))
         if clic:
-            if clic_posx >=980 and clic_posy <= 70:
+            if clic_posx >=910 and clic_posy <= 70:
                 running = False
 
             elif 630>=clic_posx>=420 and 140<=clic_posy<= 280:
                 state = '1v1'
+                players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+                grille_du_jeu = creer_grille(map)
 
             elif 630>=clic_posx>=420 and 350<=clic_posy<= 490:
                 state = 'PVE'
+                AIs = [AI('AI0', 3, AI_pos[0], AI_pos[1]),AI('AI1', 5, AI_pos[0], AI_pos[1]),AI('AI2', 4, AI_pos[0], AI_pos[1]),AI('AI3', 2, AI_pos[0], AI_pos[1]),AI('AI4', 5, AI_pos[0], AI_pos[1])]
+                AI_active = [AIs[0]]
+                grille_du_jeu1 = creer_grille(map1)
 
         clic = False
         tap = False
@@ -173,7 +169,7 @@ while running:
                 tile.update(dt, grille_du_jeu)
 
     # Mettre à jour l'affichage de l'écran
-       
+        compteur_vivant = 0
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_e]:
@@ -182,11 +178,18 @@ while running:
         # Joueur
         for player in players:
             if player.est_vivant():
+                compteur_vivant += 1
                 player.update(grille_du_jeu, dt)
                 player.move(dt,keys,grille_du_jeu)
                 player.show(screen)
 
-        
+        if compteur_vivant <= 1:
+            state = 'victory'
+            grille_du_jeu1 = creer_grille(map1)
+            grille_du_jeu = creer_grille(map)
+
+
+
         # Mettre à jour l'affichage de l'écran
         pygame.display.flip()
 
@@ -206,6 +209,9 @@ while running:
                
         if keys[pygame.K_e]:
             running = False  # Quitter la boucle
+
+        players[0].degats_recus_ce_tour = False
+
 
         if players[0].est_vivant():
             players[0].show(screen)
@@ -231,9 +237,11 @@ while running:
         else :
             Ai_spawn_delay -= dt
         if not vivant and nb_active_AI == 4:
-            players[0].pos_grille[0] = 1
-            players[0].pos_grille[1] = 1
+            grille_du_jeu = creer_grille(map)
             state = 'boss'
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+                       Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+            boss = Boss('boss',3,AI_pos[0], AI_pos[1])
             
 
         #Mettre à jour l'affichage de l'écran
@@ -245,6 +253,8 @@ while running:
     if state == 'boss': #On affronte un boss, qui veut d'abord se mettre en sécurité, puis si possible nous attaquer, et sinon se rapprocher (grâce à dijsktra)
         """Le boss a besoin des cases qui sont soit du feu, soit qui vont le devenir"""
         cases_dangereuses = []
+        nb_lignes = len(grille_du_jeu)
+        nb_colonnes = len(grille_du_jeu[0])
         for ligne in grille_du_jeu:
             for tile in ligne:
                 tile.draw(screen)
@@ -296,6 +306,8 @@ while running:
                 if boss.pos_grille != players[0].pos_grille:
                     boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , cases_dangereuses)
             boss.show(screen)
+        else:
+            state = 'victory'
             
         if players[0].est_vivant():
             players[0].show(screen)
