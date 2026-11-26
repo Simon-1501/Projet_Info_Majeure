@@ -17,6 +17,8 @@ tile_x = 70
 tile_y = 70
 screen_size_x = 1050
 screen_size_y = 630
+Ai_spawn_delay = 5
+nb_active_AI = 1
 
 state = 'menu'
 clic = False
@@ -39,6 +41,15 @@ dt = 0
 # map
 map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],[1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,2,2,2,2,2,2,2,2,2,2,2,2,1],[1,0,1,2,1,2,1,2,1,2,1,2,1,2,1],[1,0,2,2,2,2,2,2,2,2,2,2,2,2,1] ,[1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
+map1 = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,2,0,0,2,0,2,0,0,2,0,0,1], 
+        [1,0,0,0,2,0,0,0,0,0,2,0,0,0,1],
+        [1,0,0,0,0,0,2,1,2,0,0,0,0,0,1],
+        [1,0,1,2,1,0,1,1,1,0,1,2,1,0,1],
+        [1,0,0,0,0,0,2,1,2,0,0,0,0,0,1],
+        [1,0,0,0,2,0,0,0,0,0,2,0,0,0,1],
+        [1,0,0,2,0,0,2,0,2,0,0,2,0,0,1], 
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 # creation grille de jeu
 
 codes_terrain = {Tile.passage: 0,
@@ -49,6 +60,7 @@ codes_terrain = {Tile.passage: 0,
                  }
 
 grille_du_jeu = []
+grille_du_jeu1 = []
 
 for y, ligne in enumerate(map):
     ligne_de_tiles = []
@@ -69,7 +81,21 @@ for y, ligne in enumerate(map):
 nb_lignes = len(grille_du_jeu)
 nb_colonnes = len(grille_du_jeu[0])
 
-graphe = creer_graph_boss(grille_du_jeu)
+for y, ligne in enumerate(map1):
+    ligne_de_tiles1 = []
+    for x, valeur in enumerate(ligne):
+        # On passe la position en pixels ET les index x, y de la matrice
+        nouvelle_tile = Tile(x*tile_x, y*tile_y, x, y) 
+        
+        # 1 = mur, 2 = mur_cassable, sinon passage
+        if valeur == 1:
+            nouvelle_tile.send("build")
+        elif valeur == 2:
+            nouvelle_tile.send("build_cassable")
+
+        ligne_de_tiles1.append(nouvelle_tile)
+        
+    grille_du_jeu1.append(ligne_de_tiles1)
 
 bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
@@ -80,21 +106,17 @@ bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.
 bg_menu = pygame.transform.scale(bg_original_menu, (screen_size_x, screen_size_y))
 bg_menu_choix = pygame.transform.scale(bg_original_menu_choix, (screen_size_x, screen_size_y))
 
-
-
-
-
 #Joueurs
 players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
            Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 #IA
-AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
+AIs = [AI('AI0', 3, AI_pos[0], AI_pos[1]),AI('AI1', 5, AI_pos[0], AI_pos[1]),AI('AI2', 4, AI_pos[0], AI_pos[1]),AI('AI3', 2, AI_pos[0], AI_pos[1]),AI('AI4', 1, AI_pos[0], AI_pos[1])]
+AI_active = [AIs[0]]
 boss = Boss('boss',3,AI_pos[0], AI_pos[1])
 
 clic = False
 tap = False
-AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
 #Joueurs
 
 while running:
@@ -109,6 +131,7 @@ while running:
             
             for player in players:
                 if event.key == player.keybomb and player.est_vivant() and player.bomb_timer <= 0:
+                        grille_du_jeu1[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
                         grille_du_jeu[int(player.pos_grille[1])][int(player.pos_grille[0])].drop()
                         player.bomb_timer += player.BOMB_COOLDOWN
         
@@ -172,10 +195,10 @@ while running:
 
     if state == 'PVE': #on affronte un monstre qui nous court juste dessus
                        
-        for ligne in grille_du_jeu:
+        for ligne in grille_du_jeu1:
             for tile in ligne:
                 tile.draw(screen)
-                tile.update(dt, grille_du_jeu)
+                tile.update(dt, grille_du_jeu1)
         
             # Mettre à jour l'affichage de l'écran
         
@@ -184,20 +207,30 @@ while running:
         if keys[pygame.K_e]:
             running = False  # Quitter la boucle
 
-        if AI1.est_vivant():
-            AI1.show(screen)
-            AI1.update(grille_du_jeu, dt)
-
         if players[0].est_vivant():
             players[0].show(screen)
-            players[0].update(grille_du_jeu,dt)
-            players[0].move(dt, keys, grille_du_jeu)
+            players[0].update(grille_du_jeu1,dt)
+            players[0].move(dt, keys, grille_du_jeu1)
+
+        for Ai in AI_active:
+            if Ai.est_vivant():
+                Ai.show(screen)
+                Ai.update(grille_du_jeu1, dt)
 
         #Mouvement AI (test)
-        if (players[0].pos_grille[0],players[0].pos_grille[1]) != (AI1.pos_grille[0],AI1.pos_grille[1]):
-            AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
-        else:
-            players[0].take_damages(1)
+                if (players[0].pos_grille[0],players[0].pos_grille[1]) != (Ai.pos_grille[0],Ai.pos_grille[1]):
+                    Ai.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(Ai.pos_grille[0],Ai.pos_grille[1]),grille_du_jeu1) #c'est au point zebi 
+                else:
+                    players[0].take_damages(1)
+            if Ai_spawn_delay == 0 and nb_active_AI < 5:
+                Ai_spawn_delay = 5
+                AI_active.append(AIs[len(AI_active)])
+                nb_active_AI += 1
+            else :
+                Ai_spawn_delay -= dt
+            
+            
+
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
         
@@ -259,9 +292,6 @@ while running:
                     boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , cases_dangereuses)
             boss.show(screen)
             
-
-
-
         if players[0].est_vivant():
             players[0].show(screen)
             players[0].update(grille_du_jeu,dt)
