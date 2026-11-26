@@ -13,7 +13,7 @@ Le comportement du Boss repose sur un **arbre de décision** hiérarchisant les 
                           /                  \
                         OUI                  NON
                         /                      \
-           [Fuir (algo en largeur)]          [Le joueur est-il à portée ?]
+           [Fuir (algo en largeur)]   [Le joueur est-il à portée ?]
                                         /                  \
                                       OUI                  NON
                                       /                      \

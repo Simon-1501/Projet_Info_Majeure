@@ -1,6 +1,6 @@
 import pygame
 from tile import Tile
-from Recherche import *
+from Recherche_Boss import *
 import os
 
 class Boss:
@@ -127,7 +127,7 @@ class Boss:
         depart = (int(self.pos_grille[1]), int(self.pos_grille[0]))      # (ligne, col)
         arrive = (int(pos_joueur[1]), int(pos_joueur[0]))                # (ligne, col)
 
-        p = dijkstra_hpq(graphe_carte, depart)[1]
+        M, p, d = dijkstra(graphe_carte, depart)
         chemin = reconstruire_chemin(depart, arrive, p)
 
         if len(chemin) == 0:
@@ -138,7 +138,7 @@ class Boss:
 
         
         prochaine_case = chemin[0]
-
+        print(prochaine_case)
         # On évite de marcher volontairement dans une explosion si on n'y est pas déjà
         if cases_dangereuses is not None and prochaine_case in cases_dangereuses:
             return None
@@ -155,7 +155,7 @@ class Boss:
         nb_colonnes = len(grille[0])
 
         deplacement_effectue = False
-
+        
         if prochaine_case[0] > y_grid:
             if y_grid < nb_lignes - 1 and grille[y_grid + 1][x_grid].current_state.value in ["fire", "passage"]:
                 self.pos_grille[1]+=1
@@ -176,7 +176,6 @@ class Boss:
         if deplacement_effectue:
             self.move_timer = self.MOVE_COOLDOWN
             self.pos =  pygame.Vector2(self.pos_grille[0]*70, self.pos_grille[1]*70)
-
     def show(self, screen):
         rect_boss = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
         screen.blit(self.sprite, rect_boss)

@@ -16,7 +16,6 @@ carte = ["###############",
          "#             #",
          "###############"]
 
-#print(graphe_carte)
 
 def arc_sortant_min(g, M, d):
     dmin = None
