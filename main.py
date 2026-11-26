@@ -92,7 +92,7 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
 AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
 boss = Boss('boss',3,AI_pos[0], AI_pos[1])
 
-state = 'PVE'
+state = 'boss'
 clic = False
 tap = False
 AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
@@ -195,8 +195,23 @@ while running:
             players[0].move(dt, keys, grille_du_jeu)
 
         #Mouvement AI (test)
+        gr = [[0]*len(grille_du_jeu[0])]*len(grille_du_jeu)
+        for c in range(len(grille_du_jeu[0])):
+            for l in range(len(grille_du_jeu)):
+                if grille_du_jeu[l][c].current_state == "mur":
+                    gr[l][c] = ["#"]
+                elif grille_du_jeu[l][c].current_state == "mur_cassable":
+                    gr[l][c] = ["+"]
+                elif grille_du_jeu[l][c].current_state == "passage":
+                    gr[l][c] = [" "]
+        #print(gr)
+        lab = Labyrinthe(gr)
+        g = graphe_du_labyrinthe(lab)
+        for x in g:
+            for y in range(len(g[x])):
+                g[x][y] = [g[x][y],1]
         
-        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
+        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu,g) #c'est au point zebi 
 
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()

@@ -22,22 +22,8 @@ def arc_sortant_min(g, M, d):
         return None
     return (xmin, ymin, dmin)
 
-def dijkstra(grille,s):
-    gr = [[0]*len(grille[0])]*len(grille)
-    for c in range(len(grille[0])):
-        for l in range(len(grille)):
-            if grille[l][c].current_state == "mur":
-                gr[l][c] = ["#"]
-            elif grille[l][c].current_state == "mur_cassable":
-                gr[l][c] = ["+"]
-            elif grille[l][c].current_state == "passage":
-                gr[l][c] = [" "]
-    #print(gr)
-    lab = Labyrinthe(gr)
-    g = graphe_du_labyrinthe(lab)
-    for x in g:
-        for y in range(len(g[x])):
-            g[x][y] = [g[x][y],1]
+def dijkstra(g,s):
+    
     M = [s]
     p = {}
     d = {s:0}
