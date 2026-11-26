@@ -53,9 +53,10 @@ class Player:
         return self.vie > 0
 
     def take_damages(self, damages):
-        #if not self.degats_recus_ce_tour : 
-        self.vie = max(0, self.vie - damages)
-        #self.degats_recus_ce_tour = True
+        if not self.degats_recus_ce_tour : 
+            self.vie = max(0, self.vie - damages)
+            self.degats_recus_ce_tour = True
+            self.damage_timer = 1
 
     def update(self, grille, dt):
         # Réinitialiser le compteur au début de chaque mise à jour.

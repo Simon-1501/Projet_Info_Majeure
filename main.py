@@ -18,7 +18,7 @@ tile_y = 70
 screen_size_x = 1050
 screen_size_y = 630
 
-state = 'boss'
+state = 'menu'
 clic = False
 tap = False
 
@@ -118,7 +118,7 @@ while running:
             clic_posx, clic_posy = pygame.mouse.get_pos()
 
     if state == 'menu':
-        screen.blit(bg_menu,(0,0))
+        screen.blit(bg_menu,(0,0)) 
         if tap:
             state = 'menu choix mode de jeu'
         pygame.display.flip()
@@ -194,9 +194,10 @@ while running:
             players[0].move(dt, keys, grille_du_jeu)
 
         #Mouvement AI (test)
-        g = creer_graph_boss(grille_du_jeu)
-        AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu,g) #c'est au point zebi 
-
+        if (players[0].pos_grille[0],players[0].pos_grille[1]) != (AI1.pos_grille[0],AI1.pos_grille[1]):
+            AI1.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(AI1.pos_grille[0],AI1.pos_grille[1]),grille_du_jeu) #c'est au point zebi 
+        else:
+            players[0].take_damages(1)
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
         
@@ -206,7 +207,6 @@ while running:
     if state == 'boss': #On affronte un boss, qui veut d'abord se mettre en sécurité, puis si possible nous attaquer, et sinon se rapprocher (grâce à dijsktra)
         """Le boss a besoin des cases qui sont soit du feu, soit qui vont le devenir"""
         cases_dangereuses = []
-        graphe = creer_graph_boss(grille_du_jeu)
         for ligne in grille_du_jeu:
             for tile in ligne:
                 tile.draw(screen)
@@ -237,7 +237,7 @@ while running:
                                     cases_dangereuses.append((ny, nx))
 
         keys = pygame.key.get_pressed()
-               
+        print('danger',cases_dangereuses)
         if keys[pygame.K_e]:
             running = False  # Quitter la boucle
 
@@ -246,7 +246,8 @@ while running:
 
             # 1. Vérifier s'il y a une bombe ou si ça va péter. Si oui, on fuit
             if boss.est_en_danger(cases_dangereuses):
-                boss.fuir(dt, grille_du_jeu, graphe, cases_dangereuses)
+                print('danger')
+                boss.fuir(dt, grille_du_jeu, cases_dangereuses)
             # 2. Sinon, vérifier si le joueur est assez proche. Si oui, le boss pose une bombe
             elif boss.joueur_a_portee(players[0].pos_grille):
                 grille_du_jeu[int(boss.pos_grille[1])][int(boss.pos_grille[0])].drop()
@@ -254,8 +255,8 @@ while running:
 
             # 3. Sinon -> Se rapprocher du joueur (Dijkstra)
             else:
-                boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe, cases_dangereuses)
-                print(boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe, cases_dangereuses))
+                if boss.pos_grille != players[0].pos_grille:
+                    boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , cases_dangereuses)
             boss.show(screen)
             
 

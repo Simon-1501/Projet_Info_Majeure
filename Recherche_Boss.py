@@ -55,10 +55,26 @@ def dijkstra(g,s):
         arc_choisi = arc_sortant_min(g,M,d)
     return (M,p,d)
 
+def recherche_largeur(depart_l, graphe_carte, cases_dangereuses): #BFS
+    depart = (int(depart_l[0]), int(depart_l[1]))  # (ligne, col)
+    file = [depart]
+    parents = {depart: None}
+    case_sure = None
+    print(graphe_carte)
+    while len(file) > 0:
+        case = file.pop(0)
+        if case not in cases_dangereuses:
+            case_sure = case
+            break
+
+        for voisin, dist in graphe_carte[case]: #on a une distance de 1, cherchez pas
+            if voisin not in parents:
+                parents[voisin] = case
+                file.append(voisin)
+    return case_sure, parents
 
 
 def reconstruire_chemin(s,t,p):
-    print(s,t)
     if s not in p.values() or t == s:
         return []
     c = [t]

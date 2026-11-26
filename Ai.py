@@ -60,10 +60,10 @@ class AI:
     def take_object(self, object):
         self.object = object
 
-    def moveAI(self, dt, arrive, depart, grille, g):
-
+    def moveAI(self, dt, arrive, depart, grille):
+        g = creer_graph_boss(grille)
         M,p,d = dijkstra(g,depart)
-        #print(p)
+        Chemin = []
         if arrive not in M:
             return None
         Chemin = reconstruire_chemin(depart,arrive,p)
@@ -95,7 +95,7 @@ class AI:
                 self.pos_grille[1] -= 1
                 deplacement_effectue = True
         elif prochaine_case[0] < x_grid:
-            print("a")
+            
             if x_grid > 0 and grille[y_grid][x_grid - 1].current_state.value in [ "passage"]:
                 self.pos_grille[0] -= 1
                 deplacement_effectue = True               
@@ -103,7 +103,7 @@ class AI:
             if x_grid < nb_colonnes - 1 and grille[y_grid][x_grid + 1].current_state.value in [ "passage"]:
                 self.pos_grille[0] += 1
                 deplacement_effectue = True
-                print("b")
+                
                 
 
         if deplacement_effectue:
