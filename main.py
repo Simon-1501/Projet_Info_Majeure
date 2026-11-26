@@ -83,7 +83,7 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
 
 player_speed = 300  # Vitesse en px/s
 
-state = '1v1'
+state = 'PVE'
 clic = False
 tap = False
 AI1 = AI(player2,'bot', 3, AI_pos[0], AI_pos[1])
@@ -153,7 +153,7 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
     if state == 'PVE':
-        # Affichage du fond d'écran en premier
+       
                        
         for ligne in grille_du_jeu:
             for tile in ligne:
