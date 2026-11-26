@@ -36,7 +36,6 @@ class Player:
 
         self.pos_grille = [grille_x, grille_y]
         self.pos = pygame.Vector2(grille_x*70, grille_y*70)
-        self.rect = pygame.Rect(self.pos.x, self.pos.y, 40, 50)
 
         self.keyup = keyup
         self.keydown = keydown
@@ -46,8 +45,9 @@ class Player:
 
         self.move_timer = 0         # Chronomètre actuel
         self.MOVE_COOLDOWN = 0.2    # Temps d'attente entre deux cases (0.2 seconde)
-        self.damage_timer = 0
-        self.BOMB_TIMER = 2.5
+        self.damage_timer = 1
+        self.BOMB_COOLDOWN = 2.5
+        self.bomb_timer = 0.25
 
     def est_vivant(self):
         return self.vie > 0
@@ -67,6 +67,10 @@ class Player:
         if self.damage_timer > 0:
             self.damage_timer -= dt
 
+        if self.bomb_timer > 0:
+            self.bomb_timer -= dt
+
+            
         x = self.pos_grille[0]
         y = self.pos_grille[1]
 
@@ -75,7 +79,7 @@ class Player:
         if case_actuelle.current_state == Tile.fire:
             if self.damage_timer <= 0:
                 self.take_damages(1)
-                self.damage_timer = 0.6
+                self.damage_timer = 1
 
     def take_object(self, object):
         self.object = object

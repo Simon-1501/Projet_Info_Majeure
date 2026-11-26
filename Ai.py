@@ -1,10 +1,11 @@
 import pygame
 from tile import Tile
 from Recherche import *
+import os
 
 
 class AI:
-    def __init__(self, sprite, nom, vie_max, x, y, object=None):
+    def __init__(self, nom, vie_max, x, y, object=None):
         self.object = object
         self.nom = nom
         self.vie_max = vie_max
@@ -13,7 +14,8 @@ class AI:
 
         self.degats_recus_ce_tour = 0
 
-        self.sprite = sprite
+        self.sprite = pygame.image.load(os.path.join('Sprites', 'AI.png')).convert_alpha()
+        self.sprite = pygame.transform.scale(self.sprite, (70, 70))         
         
         self.pos_grille = [x, y]
         self.pos = pygame.Vector2(x*70, y*70)

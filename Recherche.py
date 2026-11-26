@@ -53,6 +53,8 @@ def dijkstra(grille,s):
 #print(dijkstra(graphe_carte, (1,1))[1])
 
 def reconstruire_chemin(s,t,p):
+    if s not in p or t == s:
+        return []
     c = [t]
     while t!=s:
         t = p[t]
