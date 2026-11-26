@@ -6,6 +6,7 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
+from Ai import AI
 from boss import Boss
 from Recherche_Boss import creer_graph_boss
 from labyrinthe import *
@@ -88,7 +89,7 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
            Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 #IA
-#AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
+AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
 boss = Boss('boss',3,AI_pos[0], AI_pos[1])
 
 state = 'PVE'
