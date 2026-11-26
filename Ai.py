@@ -23,7 +23,9 @@ class AI:
 
 
         self.move_timer = 0         # Chronomètre actuel
-        self.MOVE_COOLDOWN = 0.5*(self.vie_max/3)  # Temps d'attente entre deux cases (0.2 seconde)
+        self.MOVE_COOLDOWN = 0.7*(self.vie_max/3)  # Temps d'attente entre deux cases (0.2 seconde)
+        if self.MOVE_COOLDOWN <= 0.2:
+            self.MOVE_COOLDOWN == 0.25
         self.damage_timer = 0
 
     def est_vivant(self):

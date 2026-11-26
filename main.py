@@ -17,7 +17,7 @@ tile_x = 70
 tile_y = 70
 screen_size_x = 1050
 screen_size_y = 630
-Ai_spawn_delay = 5
+Ai_spawn_delay = 15
 nb_active_AI = 1
 
 state = 'menu'
@@ -211,26 +211,29 @@ while running:
             players[0].show(screen)
             players[0].update(grille_du_jeu1,dt)
             players[0].move(dt, keys, grille_du_jeu1)
-
+        vivant = False
         for Ai in AI_active:
             if Ai.est_vivant():
+                vivant = True
                 Ai.show(screen)
                 Ai.update(grille_du_jeu1, dt)
-            else:
-                state = 'boss'
 
         #Mouvement AI (test)
                 if (players[0].pos_grille[0],players[0].pos_grille[1]) != (Ai.pos_grille[0],Ai.pos_grille[1]):
                     Ai.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(Ai.pos_grille[0],Ai.pos_grille[1]),grille_du_jeu1) #c'est au point zebi 
                 else:
-                    players[0].take_damages(1)
-            if Ai_spawn_delay == 0 and nb_active_AI < 5:
-                Ai_spawn_delay = 5
-                AI_active.append(AIs[len(AI_active)])
-                nb_active_AI += 1
-            else :
-                Ai_spawn_delay -= dt
-            
+                    if players[0].damage_timer <= 0:
+                        players[0].take_damages(1)
+        if Ai_spawn_delay <= 0 and nb_active_AI < 5:
+            Ai_spawn_delay = 20
+            AI_active.append(AIs[len(AI_active)])
+            nb_active_AI += 1
+        else :
+            Ai_spawn_delay -= dt
+        if not vivant and nb_active_AI == 4:
+            players[0].pos_grille[0] = 1
+            players[0].pos_grille[1] = 1
+            state = 'boss'
             
 
         #Mettre à jour l'affichage de l'écran
