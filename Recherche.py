@@ -3,26 +3,16 @@ from tile import *
 from statemachine import StateChart, State
 import heapq
 
-
 """Legende : '#' = mur incassable, '+' = mur cassable, ' ' = chemin """
-
-carte = ["###############",
-         "#  +++++++++  #",
-         "# #+#+#+#+#+# #",
-         "# ++++++++++++#",
-         "# #+#+#+#+#+#+#",
-         "# ++++++++++++#",
-         "# #+#+#+#+#+# #",
-         "#             #",
-         "###############"]
-
 
 def arc_sortant_min(g, M, d):
     dmin = None
     xmin = None
     ymin = None
     for x in M:
+        print(g)
         for (y,l) in g[x]:
+            y = (y[1],y[0])
             if y not in M:
                 if dmin == None or d[x] + l < dmin:
                     dmin = d[x]+l
@@ -37,14 +27,17 @@ def dijkstra(grille,s):
     for c in range(len(grille[0])):
         for l in range(len(grille)):
             if grille[l][c].current_state == "mur":
-                gr[l][c] = "#"
+                gr[l][c] = ["#"]
             elif grille[l][c].current_state == "mur_cassable":
-                gr[l][c] = "+"
+                gr[l][c] = ["+"]
             elif grille[l][c].current_state == "passage":
-                gr[l][c] = " "
-    print(gr)
+                gr[l][c] = [" "]
+    #print(gr)
     lab = Labyrinthe(gr)
     g = graphe_du_labyrinthe(lab)
+    for x in g:
+        for y in range(len(g[x])):
+            g[x][y] = [g[x][y],1]
     M = [s]
     p = {}
     d = {s:0}
