@@ -6,9 +6,9 @@ import os
 # Import des Classes
 from player import Player
 from tile import Tile
-from Ai import *
 from boss import Boss
 from Recherche_Boss import creer_graph_boss
+from labyrinthe import *
 
 
 #var
@@ -68,7 +68,7 @@ for y, ligne in enumerate(map):
 nb_lignes = len(grille_du_jeu)
 nb_colonnes = len(grille_du_jeu[0])
 
-
+graphe = creer_graph_boss(grille_du_jeu)
 
 bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
@@ -88,7 +88,7 @@ players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, 
            Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
 
 #IA
-AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
+#AI1 = AI('bot', 3, AI_pos[0], AI_pos[1])
 boss = Boss('boss',3,AI_pos[0], AI_pos[1])
 
 state = 'boss'
@@ -220,27 +220,27 @@ while running:
 
     if state == 'boss': #On affronte un boss, qui veut d'abord se mettre en sécurité, puis si possible nous attaquer, et sinon se rapprocher (grâce à dijsktra)
         """Le boss a besoin des cases qui sont soit du feu, soit qui vont le devenir"""
-        graphe_carte = creer_graph_boss(grille_du_jeu)
         cases_dangereuses = []
+        graphe = creer_graph_boss(grille_du_jeu)
         for ligne in grille_du_jeu:
             for tile in ligne:
                 tile.draw(screen)
                 tile.update(dt, grille_du_jeu)
-
+                xtile, ytile = tile.x_grid, tile.y_grid
                 if tile.current_state == Tile.fire:
-                    if (y, x) not in cases_dangereuses:
-                        cases_dangereuses.append((y, x))
+                    if (ytile, xtile) not in cases_dangereuses:
+                        cases_dangereuses.append((ytile, xtile))
 
                 elif tile.current_state == Tile.bomb:
-                    if (y, x) not in cases_dangereuses:
-                        cases_dangereuses.append((y, x))
+                    if (ytile, xtile) not in cases_dangereuses:
+                        cases_dangereuses.append((ytile, xtile))
 
                     # On regarde les 4 directions autour de la bombe (portée = 3 cases)
                     portee = 3
                     for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
                         for dist in range(1, portee + 1): # On utilise la même méthode que pour check les directions où la bombe va exploser: on a comme ca les endroits où ca va péter
-                            nx = x + dx * dist
-                            ny = y + dy * dist
+                            nx = xtile + dx * dist
+                            ny = ytile + dy * dist
 
                             if 0 <= ny < nb_lignes and 0 <= nx < nb_colonnes:
                                 # Un mur arrête la flamme. Pas besoin de l'ajouter car il peut pas marcher dessus
@@ -250,8 +250,6 @@ while running:
 
                                 if (ny, nx) not in cases_dangereuses:
                                     cases_dangereuses.append((ny, nx))
-        print(cases_dangereuses)
-
 
         keys = pygame.key.get_pressed()
                
@@ -263,8 +261,7 @@ while running:
 
             # 1. Vérifier s'il y a une bombe ou si ça va péter. Si oui, on fuit
             if boss.est_en_danger(cases_dangereuses):
-                boss.fuir(dt, grille_du_jeu, graphe_carte, cases_dangereuses)
-
+                boss.fuir(dt, grille_du_jeu, graphe, cases_dangereuses)
             # 2. Sinon, vérifier si le joueur est assez proche. Si oui, le boss pose une bombe
             elif boss.joueur_a_portee(players[0].pos_grille):
                 grille_du_jeu[int(boss.pos_grille[1])][int(boss.pos_grille[0])].drop()
@@ -272,8 +269,9 @@ while running:
 
             # 3. Sinon -> Se rapprocher du joueur (Dijkstra)
             else:
-                boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe_carte, cases_dangereuses)
+                boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , graphe, cases_dangereuses)
             boss.show(screen)
+
 
 
         if players[0].est_vivant():
