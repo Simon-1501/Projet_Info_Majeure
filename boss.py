@@ -13,7 +13,7 @@ class Boss:
 
         self.degats_recus_ce_tour = 0
 
-        self.sprite = pygame.image.load(os.path.join('Sprites', 'AI.png')).convert_alpha()
+        self.sprite = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (70, 70)) 
             
 
