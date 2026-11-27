@@ -18,7 +18,6 @@ tile_y = 70
 screen_size_x = 1050
 screen_size_y = 630
 Ai_spawn_delay = 15
-nb_active_AI = 1
 
 state = 'menu'
 clic = False
@@ -157,6 +156,8 @@ while running:
                 AIs = [AI('AI0', 3, AI_pos[0], AI_pos[1]),AI('AI1', 5, AI_pos[0], AI_pos[1]),AI('AI2', 4, AI_pos[0], AI_pos[1]),AI('AI3', 2, AI_pos[0], AI_pos[1]),AI('AI4', 5, AI_pos[0], AI_pos[1])]
                 AI_active = [AIs[0]]
                 grille_du_jeu1 = creer_grille(map1)
+                Ai_spawn_delay = 15
+                nb_active_AI = 1
 
         clic = False
         tap = False
