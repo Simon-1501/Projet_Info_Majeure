@@ -25,7 +25,7 @@ def creer_graph_boss(grille):
             graphe[case] = voisins
     return graphe
 
-def arc_sortant_min(g, M, d):
+def arc_sortant_min(g, M, d):#on cherche un arc vers un sommet qui n'a pas encore été exploré
     dmin = None
     xmin = None
     ymin = None
@@ -42,11 +42,11 @@ def arc_sortant_min(g, M, d):
 
 
 
-def dijkstra(g,s):
+def dijkstra(g,s):#on trouve les chemins les plus courts vers tous les sommets
     M = [s]
     p = {}
     d = {s:0}
-    arc_choisi = arc_sortant_min(g,M,d)
+    arc_choisi = arc_sortant_min(g,M,d)#on prend un arc x,y tq la distance entre depart et y est minimale
     while arc_choisi != None:
         x,y,dmin = arc_choisi
         M.append(y)
@@ -73,7 +73,7 @@ def recherche_largeur(depart_l, graphe_carte, cases_dangereuses): #BFS
     return case_sure, parents
 
 
-def reconstruire_chemin(s,t,p):
+def reconstruire_chemin(s,t,p): #on utilise la liste des prédécesseur p pour reconstruire le chemin case par case
     if s not in p.values() or t == s:
         return []
     c = [t]

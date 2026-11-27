@@ -31,7 +31,7 @@ class AI:
     def est_vivant(self):
         return self.vie > 0
 
-    def take_damages(self, damages):
+    def take_damages(self, damages): #inflige damages dégats à l'ia
         vie_avant = self.vie
 
         self.vie = max(0, self.vie - damages)
@@ -54,7 +54,7 @@ class AI:
 
         case_actuelle = grille[y][x]
 
-        if case_actuelle.current_state == Tile.fire:
+        if case_actuelle.current_state == Tile.fire: #inflige un dégat si l'ia est sur une case qui a explosé et réinitialise la durée d'invincibilité
             if self.damage_timer <= 0:
                 self.take_damages(1)
                 self.damage_timer = 0.6
@@ -63,23 +63,21 @@ class AI:
         self.object = object
 
     def moveAI(self, dt, arrive, depart, grille):
-        g = creer_graph_boss(grille)
-        M,p,d = dijkstra(g,depart)
+        g = creer_graph_boss(grille)#on crée un graphe adapté à l'état actuel de la grille
+        M,p,d = dijkstra(g,depart)#on recherche les chemins les plus courts vers chaque sommet
         Chemin = []
-        if arrive not in M:
+        if arrive not in M: #si on ne peut pas accéder à la position du joueur avec le chemin actuel on recalcule un chemin
             return None
-        Chemin = reconstruire_chemin(depart,arrive,p)
-        if Chemin[0] == depart:
-            prochaine_case = Chemin[1]
-        
-
+        Chemin = reconstruire_chemin(depart,arrive,p) #on reconstruit un chemin entre la position ia et la position joueur a partir des predecesseurs donnés par dijkstra
+        prochaine_case = Chemin[1]
+        #On verifie si l'ia a bougé récemment
         if self.move_timer > 0:
             self.move_timer -= dt
             if self.move_timer > 0:
                 return None
             else:
                 self.move_timer = 0
-
+        #on defini sa position sur la grille du jeu
         x_grid = int(self.pos_grille[0])
         y_grid = int(self.pos_grille[1])
 
@@ -87,27 +85,27 @@ class AI:
         nb_colonnes = len(grille[0]) if nb_lignes > 0 else 0
 
         deplacement_effectue = False
-
+        #si la prochaine case est a droite de la position
         if prochaine_case[1] > y_grid:
             if y_grid < nb_lignes - 1 and grille[y_grid + 1][x_grid].current_state.value in ["fire", "passage"]:
                 self.pos_grille[1] += 1
                 deplacement_effectue = True
+        #si la prochaine case est a gauche de la position
         elif prochaine_case[1] < y_grid:
             if y_grid > 0 and grille[y_grid - 1][x_grid].current_state.value in ["fire", "passage"]:
                 self.pos_grille[1] -= 1
                 deplacement_effectue = True
-        elif prochaine_case[0] < x_grid:
-            
+        #si la prochaine case est au dessus de la position
+        elif prochaine_case[0] < x_grid:            
             if x_grid > 0 and grille[y_grid][x_grid - 1].current_state.value in [ "passage"]:
                 self.pos_grille[0] -= 1
-                deplacement_effectue = True               
+                deplacement_effectue = True 
+        #si la prochaine case est au dessous de la position              
         elif prochaine_case[0] > x_grid:
             if x_grid < nb_colonnes - 1 and grille[y_grid][x_grid + 1].current_state.value in [ "passage"]:
                 self.pos_grille[0] += 1
                 deplacement_effectue = True
-                
-                
-
+        #si l'ia s'est déplacé on attend avant de la redéplacé        
         if deplacement_effectue:
             self.move_timer = self.MOVE_COOLDOWN
             self.pos = pygame.Vector2(self.pos_grille[0]*70, self.pos_grille[1]*70)
