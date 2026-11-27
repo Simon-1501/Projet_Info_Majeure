@@ -15,9 +15,15 @@ class Boss:
 
         self.degats_recus_ce_tour = 0
 
-        self.sprite = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
-        self.sprite = pygame.transform.scale(self.sprite, (70, 70)) 
-            
+        self.sprite1 = pygame.image.load(os.path.join('Sprites', 'BOSS1.png')).convert_alpha()
+        self.sprite1 = pygame.transform.scale(self.sprite1, (70, 70)) 
+        
+        self.sprite2 = pygame.image.load(os.path.join('Sprites', 'BOSS2.png')).convert_alpha()
+        self.sprite2 = pygame.transform.scale(self.sprite2, (70, 70)) 
+
+        self.sprite3 = pygame.image.load(os.path.join('Sprites', 'BOSS3.png')).convert_alpha()
+        self.sprite3 = pygame.transform.scale(self.sprite3, (70, 70)) 
+               
 
         self.pos_grille = [x, y]
         self.pos = pygame.Vector2(x*70, y*70)
@@ -211,5 +217,14 @@ class Boss:
 
 
     def show(self, screen):
-        rect_boss = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
-        screen.blit(self.sprite, rect_boss)
+        if self.phase == 0:
+            rect_boss = self.sprite2.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite2, rect_boss)
+
+        if self.phase == 1:
+            rect_boss = self.sprite1.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite1, rect_boss)
+
+        if self.phase == 2:
+            rect_boss = self.sprite3.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite3, rect_boss)

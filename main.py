@@ -45,12 +45,12 @@ dt = 0
 # map
 map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
        [1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], 
-       [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],
-       [1,0,2,2,2,2,2,2,2,2,2,2,2,2,1],
-       [1,0,1,2,1,2,1,2,1,2,1,2,1,2,1],
-       [1,0,2,2,2,2,2,2,2,2,2,2,2,2,1],
-       [1,0,1,2,1,2,1,2,1,2,1,2,1,0,1],
-       [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 
+       [1,0,1,2,1,1,1,2,1,1,1,2,1,0,1],
+       [1,2,2,0,0,0,0,0,0,0,0,0,2,2,1],
+       [1,1,2,0,1,0,1,1,1,0,1,0,2,1,1],
+       [1,2,2,0,0,0,0,0,0,0,0,0,2,2,1],
+       [1,0,1,2,1,1,1,2,1,1,1,2,1,0,1],
+       [1,0,0,2,2,2,2,2,2,2,2,2,0,0,1], 
        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 map1 = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -115,6 +115,8 @@ def creer_grille(map):
     return grille_du_jeu
 
 grille_du_jeu = creer_grille(map)
+grille_du_jeu1 = creer_grille(map1)
+
 
 bg_original_menu = pygame.image.load(os.path.join('Sprites', 'BG.png')).convert()
 bg_original_menu_choix = pygame.image.load(os.path.join('Sprites', 'BG_mode_jeu.png')).convert()
@@ -344,16 +346,14 @@ while running:
 
                                 if (ny, nx) not in cases_dangereuses:
                                     cases_dangereuses.append((ny, nx))
-        if compteur_shield <= 2:
+
+        if 0<compteur_shield <= 2 or keys[pygame.K_o]:
             boss.LASER_DURATION = 0.5
+            boss.LASER_COOLDOWN = 1.5
+            boss.phase = 0
 
-        if boss.phase == 1 and (compteur_shield == 0 or keys[pygame.K_p]):
-            grille_du_jeu = creer_grille(mapboss2)
-            players = [Player(1, 'Joueur 1', players[0].vie, players[0].pos_grille[0], players[0].pos_grille[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE)]
-            boss = Boss('boss',3,boss_pos[0], boss_pos[1])
-            boss.phase = 2
 
-        if boss.phase == 1:
+        if boss.est_vivant:
             boss.update(grille_du_jeu, dt)
             boss.show(screen)
 
@@ -361,30 +361,10 @@ while running:
                 boss.laser_timer = boss.LASER_COOLDOWN
                 tile_joueur = grille_du_jeu[int(players[0].pos_grille[1])][int(players[0].pos_grille[0])]
                 tile_joueur.laser_boss(boss.LASER_DURATION)
-            
+        else:
+            state = 'victory'
 
-        elif boss.phase == 2:
-            if boss.est_vivant():
-                boss.update(grille_du_jeu, dt)
 
-                # 1. Vérifier s'il y a une bombe ou si ça va péter. Si oui, on fuit
-                if boss.est_en_danger(cases_dangereuses):
-                    print(boss.est_en_danger(cases_dangereuses))
-                    boss.fuir(dt, grille_du_jeu, cases_dangereuses)
-                    print('fuir')
-                
-                # 2. Sinon, vérifier si le joueur est assez proche. Si oui, le boss pose une bombe
-                if boss.joueur_a_portee(players[0].pos_grille,grille_du_jeu):
-                    grille_du_jeu[int(boss.pos_grille[1])][int(boss.pos_grille[0])].drop()
-                    boss.bomb_timer = boss.BOMB_COOLDOWN
-
-                # 3. Sinon -> Se rapprocher du joueur (Dijkstra)
-                else:
-                    if boss.pos_grille != players[0].pos_grille:
-                        boss.se_rapprocher(dt, players[0].pos_grille, grille_du_jeu , cases_dangereuses)
-                boss.show(screen)
-            else:
-                state = 'victory'
             
         if players[0].est_vivant():
             players[0].show(screen)
@@ -437,5 +417,4 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
         
-
 pygame.quit()
