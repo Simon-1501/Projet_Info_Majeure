@@ -11,6 +11,8 @@ class Boss:
         self.vie_max = vie_max
         self.vie = vie_max
 
+        self.phase = 1
+
         self.degats_recus_ce_tour = 0
 
         self.sprite = pygame.image.load(os.path.join('Sprites', 'PLAYER2.png')).convert_alpha()
@@ -20,8 +22,9 @@ class Boss:
         self.pos_grille = [x, y]
         self.pos = pygame.Vector2(x*70, y*70)
 
-
-
+        self.LASER_DURATION = 0.75
+        self.laser_timer = 0
+        self.LASER_COOLDOWN = 2.5
         self.move_timer = 0
         self.MOVE_COOLDOWN = 0.5
         self.damage_timer = 0
@@ -43,6 +46,9 @@ class Boss:
 
         if not self.est_vivant():
             return
+
+        if self.laser_timer > 0:
+            self.laser_timer -= dt
 
         if self.damage_timer > 0:
             self.damage_timer -= dt
@@ -67,6 +73,7 @@ class Boss:
         pos_actuelle = (int(self.pos_grille[0]), int(self.pos_grille[1]))  # (ligne, col)
         return pos_actuelle in cases_dangereuses
 
+
     def fuir(self, dt, grille, cases_dangereuses):
         if self.move_timer > 0:
             self.move_timer -= dt
@@ -84,27 +91,54 @@ class Boss:
             if len(chemin) > 0:
                 if chemin[0] == depart:
                     prochaine_case = chemin[1]
-                print('chemin', chemin, 'pro case', prochaine_case)
 
                 self.bouger_proche(prochaine_case, dt, grille)
+                print('bougé')
 
                 
 
     #Vérifier si le joueur est assez proche
-    def joueur_a_portee(self, pos_joueur):
+    def joueur_a_portee(self, pos_joueur, grille):
         """
-        Vérifie si le joueur est à portée d'attaque (en ligne droite ou distance Manhattan)
-        et si le boss peut poser une bombe.
+        Vérifie si le joueur est aligné avec le boss, à portée d'explosion,
+        et qu'aucun mur ne bloque la flamme entre eux
         """
-
         if self.bomb_timer > 0:
             return False
 
         x_boss, y_boss = int(self.pos_grille[0]), int(self.pos_grille[1])
         x_joueur, y_joueur = int(pos_joueur[0]), int(pos_joueur[1])
 
+        # 1. Le joueur doit être sur la même ligne ou la même colonne
+        if x_boss != x_joueur and y_boss != y_joueur:
+            return False
+
+        # 2. Vérifier la distance
         distance = abs(x_boss - x_joueur) + abs(y_boss - y_joueur)
-        return distance <= self.portee_bombe
+        if distance > self.portee_bombe:
+            return False
+
+        # 3. Vérifier qu'il n'y a pas de mur entre le boss et le joueur
+        if x_boss == x_joueur:  # Même colonne
+            if y_joueur > y_boss:
+                dx = 1
+            else:
+                dx = -1
+            for y in range(y_boss + dx, y_joueur, dx):
+                if grille[y][x_boss].current_state.value in ["mur", "mur_cassable"]:
+                    return False
+
+        elif y_boss == y_joueur:  # Même ligne
+            if x_joueur > x_boss:
+                dy = 1
+            else:
+                dy = -1
+            for x in range(x_boss + dy, x_joueur, dy):
+                if grille[y_boss][x].current_state.value in ["mur", "mur_cassable"]:
+                    return False
+
+        return True
+
 
     def peut_poser_bombe(self):
         """Réinitialise le timer quand le boss pose une bombe dans le main."""
@@ -125,7 +159,6 @@ class Boss:
         
         if Chemin[0] == depart:
             prochaine_case = Chemin[1]
-        print(Chemin, 'c')
 
         if prochaine_case in cases_dangereuses:
             return None

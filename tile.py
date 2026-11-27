@@ -9,14 +9,16 @@ class Tile(StateChart):
     passage = State("Passage", initial=True)
     bomb = State("Bomb")
     fire = State("Fire")
+    shield = State("Shield")
     
     # 2. Transitions
     drop = passage.to(bomb)
-    explode = bomb.to(fire) | mur_cassable.to(fire) | passage.to(fire) | fire.to(fire)
+    explode = bomb.to(fire) | mur_cassable.to(fire) | passage.to(fire) | fire.to(fire) | shield.to(fire)
     extinguish = fire.to(passage)
     
     build = passage.to(mur)
     build_cassable = passage.to(mur_cassable)
+    build_shield = passage.to(shield)
 
     def __init__(self, x, y, x_grid, y_grid, boost = None):
         super().__init__()
@@ -32,6 +34,9 @@ class Tile(StateChart):
         self.hebre_sprite = pygame.image.load(os.path.join('Sprites', 'herbe.png')).convert_alpha()
         self.hebre_sprite = pygame.transform.scale(self.hebre_sprite, (70, 70)) 
 
+        self.shield_sprite = pygame.image.load(os.path.join('Sprites', 'AI.png')).convert_alpha()
+        self.shield_sprite = pygame.transform.scale(self.shield_sprite, (70, 70)) 
+            
         self.cassable_sprite = pygame.image.load(os.path.join('Sprites', 'cassable.png')).convert_alpha()
         self.cassable_sprite = pygame.transform.scale(self.cassable_sprite, (70, 70)) 
 
@@ -43,12 +48,16 @@ class Tile(StateChart):
 
         self.fire_sprite = pygame.image.load(os.path.join('Sprites', 'fire.png')).convert_alpha()
         self.fire_sprite = pygame.transform.scale(self.fire_sprite, (70, 70)) 
+        
+        self.laser_sprite = pygame.image.load(os.path.join('Sprites', 'laser.png')).convert_alpha()
+        self.laser_sprite = pygame.transform.scale(self.laser_sprite, (70, 70)) 
 
 
 
+        self.laser_arrive = False
 
 
-
+        self.LASER_DURATION = 0.75 # 0.75 seconde avant le laser
         self.BOMB_DURATION = 2.0  # 2 secondes avant explosion
         self.FIRE_DURATION = 0.5   # 0.5 seconde de fire
 
@@ -65,6 +74,15 @@ class Tile(StateChart):
             if self.timer >= self.FIRE_DURATION:
                 self.timer = 0
                 self.extinguish()
+        
+        elif self.current_state == Tile.passage and self.laser_arrive:
+            if self.timer <= 0:
+                self.explode()
+                self.laser_arrive = False
+                self.timer = 0
+            else:
+                self.timer -= dt
+
 
     def declencher_explosion(self,grille):
         # Ne déclencher que les bombes encore actives.
@@ -107,8 +125,14 @@ class Tile(StateChart):
                 case_cible.timer = 0
 
                 # Un mur cassable arrête le souffle.
-                if etat_cible == Tile.mur_cassable:
+                if etat_cible == Tile.mur_cassable or etat_cible == Tile.shield:
                     break
+
+
+    def laser_boss(self,laser_duration):
+        self.timer = laser_duration
+        self.laser_arrive = True
+
 
     def draw(self, screen):
         sprite = {
@@ -117,12 +141,12 @@ class Tile(StateChart):
             "passage": self.hebre_sprite,
             "bomb": self.bombe_sprite,
             "fire": self.fire_sprite,
+            "shield": self.shield_sprite
         }
 
         screen.blit(sprite[self.current_state.value], self.rect)
+        if self.laser_arrive:
+            screen.blit(self.laser_sprite,self.rect)
 
-    def show(self, screen):
-        rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
-        screen.blit(self.sprite, rect_joueur)
 
 
