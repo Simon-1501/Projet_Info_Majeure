@@ -3,6 +3,24 @@ from tile import Tile
 import os
 
 class Player:
+    """Classe du joueur"""
+    """Entité qui peut se déplacer sur la grille. Comme les bombes sont gérées par les cases(statemachine)
+    on ne la gère pas ici mais dans les events du main
+
+    Args:
+        nom (str): Name identifier. Pas utilisé pour l'instant.
+        vie_max (int): Maximum de vie.
+        x (int), y (int): coordonées initiales, dans la grille (pas en pixels)
+        object (optional): Objet tenu. Pas utilisé pour l'instant.
+        keys : les différentes touches de contrôle du joueur.
+        color : couleur du joueur (1 ou 2) pour déterminer les sprites à utiliser.
+
+    Attributes:
+        sprite1, sprite2, sprite3: On donne la vie des joueurs grâce au sprite (plus ou moins blessé) .
+        pos_grille (list): Position sur la grille [x, y].
+        pos (Vector2): PPosition en pixels dérivée de la grille.
+        Différents timers (bomb, move, damage): contrôle les cooldowns des capacités.
+    """
     def __init__(self, color, nom, vie_max, grille_x, grille_y, keyup, keydown, keyleft, keyright, keybomb, object=None):
         self.object = object
         self.nom = nom
@@ -52,13 +70,13 @@ class Player:
     def est_vivant(self):
         return self.vie > 0
 
-    def take_damages(self, damages):
+    def take_damages(self, damages): #Méthode qui gère les dégâts reçus par le joueur. Elle vérifie si le joueur a déjà reçu des dégâts ce tour-ci pour éviter de lui infliger des dégâts multiples en une seule mise à jour.
         if not self.degats_recus_ce_tour : 
             self.vie = max(0, self.vie - damages)
             self.degats_recus_ce_tour = True
             self.damage_timer = 1
 
-    def update(self, grille, dt):
+    def update(self, grille, dt): #Méthode qui est appelée à chaque frame pour mettre à jour l'état du joueur. Elle gère les timers et vérifie si le joueur est sur une case en feu.
         # Réinitialiser le compteur au début de chaque mise à jour.
         self.degats_recus_ce_tour = 0
 

@@ -5,7 +5,6 @@ import os
 from player import Player
 from tile import Tile
 from Ai import AI
-from boss import Boss
 from Recherche_Boss import *
 
 #var
@@ -55,7 +54,7 @@ map1 = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 #map Boss phase 1
 mapboss=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,2,0,0,2,2,0,2,2,0,0,2,0,1], 
+        [1,0,2,0,0,2,0,0,0,2,2,0,2,0,1], 
         [1,2,5,2,2,1,0,0,0,1,2,2,5,2,1],
         [1,0,2,0,2,0,1,1,1,0,2,0,2,0,1],
         [1,0,1,2,1,0,1,0,1,0,1,2,1,0,1],
@@ -63,13 +62,13 @@ mapboss=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,2,5,2,2,1,0,0,0,1,2,2,5,2,1],
         [1,0,2,0,0,0,2,2,2,0,0,0,2,0,1], 
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
-#map Boss phase 2
+
 mapboss2=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 
         [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
-        [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
         [1,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
-        [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
         [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
         [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
@@ -83,7 +82,10 @@ codes_terrain = {Tile.passage: 0,
                  Tile.fire: 4,
                  Tile.shield: 5
                  }
-
+'''On utilise une statemachine pour la grille, on doit donc créer les Tiles, 
+puis les faire évoluer grâce aux transitions de la statemachine.
+La grille créée est une matrice de Tile, chaque Tile ayant un état (passage, mur, mur cassable, bombe, feu, bouclier).
+Pour parcourir la '''
 def creer_grille(map):
     grille_du_jeu = []
     for y, ligne in enumerate(map):
@@ -197,7 +199,6 @@ while running:
                 Ai_spawn_delay = 15 #delay d'apparition de la seconde ia en PVE en secondes
                 nb_active_AI = 1
                 grille_du_jeu = creer_grille(mapboss)
-                grille_du_jeu_boss2 = creer_grille(mapboss2)
 
         clic = False
         tap = False
@@ -227,6 +228,9 @@ while running:
             state = 'victory'
             grille_du_jeu1 = creer_grille(map1)
             grille_du_jeu = creer_grille(map)
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+        '''On doit réinitialiser les joueurs et la grille de jeu pour que le joueur puisse rejouer, sinon il resterait mort et la grille serait dans l'état où elle était à la fin de la partie'''
 
         # Mettre à jour l'affichage de l'écran
         pygame.display.flip()
@@ -234,7 +238,7 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
 
-    if state == 'PVE': #on affronte un monstre qui nous court juste dessus
+    elif state == 'PVE': #on affronte un monstre qui nous court juste dessus, puis le boss si on les bat tous
         screen.blit(bg_jeux,(0,0)) 
          
         for ligne in grille_du_jeu1:
@@ -252,6 +256,9 @@ while running:
             players[0].move(dt, keys, grille_du_jeu1)
         else:
             state = 'menu choix mode de jeu'
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+
 
         vivant = False
         for Ai in AI_active:
@@ -274,11 +281,11 @@ while running:
 
         else : #sinon on fait diminuer le delay d'apparition
             Ai_spawn_delay -= dt
-        
-        if (not vivant and nb_active_AI == 5) or keys[pygame.K_b]: #si toutes les ia sont éliminé on passe au boss et on réinitialise le joueur
+
+        if (not vivant and nb_active_AI >= 5) or keys[pygame.K_b]: #si toutes les ia sont éliminé on passe au boss et on réinitialise le joueur
             state = 'boss'
             players = [Player(1, 'Joueur 1', 3, player1_boss_pos[0], player1_boss_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE)]
-            boss = Boss('boss',3,boss_pos[0], boss_pos[1])
+            boss = AI('boss',3,boss_pos[0], boss_pos[1],0)
             
 
         #Mettre à jour l'affichage de l'écran
@@ -287,7 +294,7 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
 
-    if state == 'boss': #On affronte un boss, qui veut d'abord se mettre en sécurité, puis si possible nous attaquer, et sinon se rapprocher (grâce à dijsktra)
+    elif state == 'boss': #On affronte un boss, qui veut d'abord se mettre en sécurité, puis si possible nous attaquer, et sinon se rapprocher (grâce à dijsktra)
         """Le boss est constitué de 2 phases, une où on doit détruire ses 4  boucliers, puis une où il nous cours dessus"""
         screen.blit(bg_jeux,(0,0)) 
         
@@ -332,10 +339,10 @@ while running:
         if 0<compteur_shield <= 2 or keys[pygame.K_o]:
             boss.LASER_DURATION = 0.5
             boss.LASER_COOLDOWN = 1.5
-            boss.phase = 0
+            boss.phase = 1
 
-
-        if boss.est_vivant:
+        #On gangne lorsque le boss n'a plus de bouclier
+        if compteur_shield > 0:
             boss.update(grille_du_jeu, dt)
             boss.show(screen)
 
@@ -343,23 +350,74 @@ while running:
                 boss.laser_timer = boss.LASER_COOLDOWN
                 tile_joueur = grille_du_jeu[int(players[0].pos_grille[1])][int(players[0].pos_grille[0])]
                 tile_joueur.laser_boss(boss.LASER_DURATION)
-        else:
-            state = 'victory'
-
-
+        
+        if compteur_shield == 0 or keys[pygame.K_p]:
+            boss = AI('AI0', 1.5,boss_pos[0] , boss_pos[1],2)
+            state = 'phase finale'
+            grille_du_jeu = creer_grille(mapboss2)
             
         if players[0].est_vivant():
             players[0].show(screen)
             players[0].update(grille_du_jeu,dt)
             players[0].move(dt, keys, grille_du_jeu)
+
         else:
             state = 'menu choix mode de jeu'
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+
 
         #Mettre à jour l'affichage de l'écran
         pygame.display.flip()
         
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
+
+    # 'phase finale' state: Il s'agit de la phase finale du combat contre le boss ; elle se déclenche lorsque le boss perd tous ses boucliers, ou en appuyant sur la touche « p » alors que l'on se trouve dans l'état « boss ».
+
+    elif state == 'phase finale':
+        screen.blit(bg_jeux,(0,0)) 
+        screen.blit(bg_jeux,(0,0)) 
+
+        for ligne in grille_du_jeu:
+            for tile in ligne:
+                tile.draw(screen)
+                tile.update(dt, grille_du_jeu)
+                
+                # Mettre à jour l'affichage de l'écran
+
+        if players[0].est_vivant():
+            players[0].show(screen)
+            players[0].update(grille_du_jeu,dt)
+            players[0].move(dt, keys, grille_du_jeu)
+        else:
+            state = 'menu choix mode de jeu'
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+        
+
+        if boss.est_vivant():
+            
+            boss.show(screen)
+            boss.update(grille_du_jeu,dt)
+
+            if (players[0].pos_grille[0],players[0].pos_grille[1]) != (boss.pos_grille[0],boss.pos_grille[1]): #si la position de l'ia est différente de la position du joueur elle cherche un chemin
+                boss.moveAI(dt,(players[0].pos_grille[0],players[0].pos_grille[1]),(boss.pos_grille[0],boss.pos_grille[1]),grille_du_jeu) 
+            
+            else:# si l'ia est sur le joueuret qu'il n'a pas reçu de dégats depuis une seconde le joueur prend un dégat
+                if players[0].damage_timer <= 0:
+                    players[0].take_damages(3)    
+
+        else:
+            state = 'victory'
+            players = [Player(1, 'Joueur 1', 3, player1_pos[0], player1_pos[1], pygame.K_z, pygame.K_s, pygame.K_q, pygame.K_d, pygame.K_SPACE), 
+           Player(2, 'Joueur 2', 3, player2_pos[0], player2_pos[1], pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT)]
+
+        pygame.display.flip()
+        
+        # Limite à 60 FPS et calcul du dt (en secondes)
+        dt = clock.tick(60) / 1000
+
 
     if state == 'Test':
         screen.blit(bg_jeux,(0,0)) 

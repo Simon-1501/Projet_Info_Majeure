@@ -3,24 +3,33 @@ import os
 from statemachine import StateChart, State
 
 class Tile(StateChart):
+    """Utilisation d'une state machine pour gérer les états des cases du jeu. 
+    Chaque case peut être dans un état différent (mur, passage, bombe, feu, etc.) 
+    et les transitions entre ces états sont définies par des événements spécifiques 
+    (poser une bombe, explosion, extinction du feu, etc.)."""
     # 1. États
     mur = State("Mur", final=True)
     mur_cassable = State("Mur cassable")
     passage = State("Passage", initial=True)
     bomb = State("Bomb")
     fire = State("Fire")
+    fire_laser = State("Fire laser")
     shield = State("Shield")
     
-    # 2. Transitions
+    # 2. Transitions utilisées pour les bombes
     drop = passage.to(bomb)
     explode = bomb.to(fire) | mur_cassable.to(fire) | passage.to(fire) | fire.to(fire) | shield.to(fire)
-    extinguish = fire.to(passage)
-    
+    lasering = passage.to(fire_laser)
+    extinguish = fire.to(passage) | fire_laser.to(passage)
+
+
+    # 3. Transistions de construction
     build = passage.to(mur)
     build_cassable = passage.to(mur_cassable)
     build_shield = passage.to(shield)
 
-    def __init__(self, x, y, x_grid, y_grid, boost = None):
+    def __init__(self, x, y, x_grid, y_grid):
+        
         super().__init__()
         self.rect = pygame.Rect(x, y, 70, 70)
         
@@ -28,13 +37,12 @@ class Tile(StateChart):
         self.y_grid = y_grid
 
         self.range = 3
-        self.timer = 0
-        self.boost = boost
-
+        self.timer = 0 # Le timer est réinitialisé à 0 pour chaque case, et il est utilisé pour gérer la durée des états "bomb" et "fire". 
+                       #Fonctionnement à l'envers par rapport aux bombes (croissant vs décroissant)
         self.hebre_sprite = pygame.image.load(os.path.join('Sprites', 'herbe.png')).convert_alpha()
         self.hebre_sprite = pygame.transform.scale(self.hebre_sprite, (70, 70)) 
 
-        self.shield_sprite = pygame.image.load(os.path.join('Sprites', 'AI.png')).convert_alpha()
+        self.shield_sprite = pygame.image.load(os.path.join('Sprites', 'SHIELD.png')).convert_alpha()
         self.shield_sprite = pygame.transform.scale(self.shield_sprite, (70, 70)) 
             
         self.cassable_sprite = pygame.image.load(os.path.join('Sprites', 'cassable.png')).convert_alpha()
@@ -60,6 +68,7 @@ class Tile(StateChart):
         self.LASER_DURATION = 0.75 # 0.75 seconde avant le laser
         self.BOMB_DURATION = 2.0  # 2 secondes avant explosion
         self.FIRE_DURATION = 0.5   # 0.5 seconde de fire
+        self.LASER_FIRE_DURATION = 0.1 # 0.1 seconde de fire laser
 
     def update(self, dt, grille):
         if self.current_state == Tile.bomb:
@@ -77,14 +86,19 @@ class Tile(StateChart):
         
         elif self.current_state == Tile.passage and self.laser_arrive:
             if self.timer <= 0:
-                self.explode()
+                self.lasering()
                 self.laser_arrive = False
                 self.timer = 0
             else:
                 self.timer -= dt
+        
+        elif self.current_state == Tile.fire_laser:
+                self.timer = 0
+                self.extinguish()
 
 
     def declencher_explosion(self,grille):
+        """On déclenche l'explosion d'une bombe, en affectant les cases dans les quatre directions (haut, bas, gauche, droite) jusqu'à la portée de l'explosion."""
         # Ne déclencher que les bombes encore actives.
         if self.current_state != Tile.bomb:
             return None
@@ -112,7 +126,7 @@ class Tile(StateChart):
                 etat_cible = case_cible.current_state
 
                 # Mur incassable : l'explosion s'arrête.
-                if etat_cible == Tile.mur and self.boost == None:
+                if etat_cible == Tile.mur :
                     break
 
                 # Une bombe déclenche une réaction en chaîne.
@@ -130,6 +144,9 @@ class Tile(StateChart):
 
 
     def laser_boss(self,laser_duration):
+        """Cette fonction est appelée lorsqu'un laser est tiré par le boss. 
+        Elle initialise le timer pour la durée du laser et indique que le 
+        laser est arrivé sur cette case."""
         self.timer = laser_duration
         self.laser_arrive = True
 
@@ -141,7 +158,8 @@ class Tile(StateChart):
             "passage": self.hebre_sprite,
             "bomb": self.bombe_sprite,
             "fire": self.fire_sprite,
-            "shield": self.shield_sprite
+            "shield": self.shield_sprite,
+            "fire_laser": self.fire_sprite
         }
 
         screen.blit(sprite[self.current_state.value], self.rect)

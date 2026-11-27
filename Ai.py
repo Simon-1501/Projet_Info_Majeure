@@ -5,7 +5,23 @@ import os
 
 
 class AI:
-    def __init__(self, nom, vie_max, x, y, object=None):
+    
+    """ On définit cette classe comme un joueur, mais un peu modifié."""
+    """Entité de type AI représentant un adversaire qui se comporte comme un joueur
+
+    Args:
+        nom (str): Name identifier. Pas utilisé pour l'instant.
+        vie_max (int): Maximum de vie.
+        x (int), y (int): coordonées initiales.
+        object (optional): Objet tenu. Pas utilisé pour l'instant.
+
+    Attributes:
+        sprite: Image de l'IA.
+        pos_grille (list): Position sur la grille [x, y].
+        pos (Vector2): PPosition en pixels dérivée de la grille.
+        Différents timers (laser, bomb, move, damage): contrôle les cooldowns des capacités.
+    """
+    def __init__(self, nom, vie_max, x, y, phase=5, object=None):
         self.object = object
         self.nom = nom
         self.vie_max = vie_max
@@ -14,19 +30,38 @@ class AI:
 
         self.degats_recus_ce_tour = 0
 
+        self.phase = phase
+
         self.sprite = pygame.image.load(os.path.join('Sprites', 'AI.png')).convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (70, 70))         
+
+        self.sprite1 = pygame.image.load(os.path.join('Sprites', 'BOSS1.png')).convert_alpha()
+        self.sprite1 = pygame.transform.scale(self.sprite1, (70, 70)) 
         
+        self.sprite2 = pygame.image.load(os.path.join('Sprites', 'BOSS2.png')).convert_alpha()
+        self.sprite2 = pygame.transform.scale(self.sprite2, (70, 70)) 
+
+        self.sprite3 = pygame.image.load(os.path.join('Sprites', 'BOSS3.png')).convert_alpha()
+        self.sprite3 = pygame.transform.scale(self.sprite3, (70, 70)) 
+
         self.pos_grille = [x, y]
         self.pos = pygame.Vector2(x*70, y*70)
         self.rect = pygame.Rect(self.pos.x, self.pos.y, 40, 50)
 
+        self.LASER_DURATION = 0.75  # 0.75 seconde avant le laser, temps qui peut être modifié
+        self.laser_timer = 0
+        self.LASER_COOLDOWN = 2.5
 
         self.move_timer = 0         # Chronomètre actuel
         self.MOVE_COOLDOWN = 0.8*(self.vie_max/3)  # Temps d'attente entre deux cases (0.2 seconde)
+        
         if self.MOVE_COOLDOWN <= 0.2:
             self.MOVE_COOLDOWN == 0.25
         self.damage_timer = 0
+        
+        if self.phase == 2:
+            self.vie_max = 1
+            self.vie = 1
 
     def est_vivant(self):
         return self.vie > 0
@@ -45,6 +80,9 @@ class AI:
 
         if not self.est_vivant():
             return
+
+        if self.laser_timer > 0:
+            self.laser_timer -= dt
 
         if self.damage_timer > 0:
             self.damage_timer -= dt
@@ -170,5 +208,18 @@ class AI:
         self.move_timer = self.MOVE_COOLDOWN
 
     def show(self, screen):
-        rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
-        screen.blit(self.sprite, rect_joueur)
+        if self.phase == 0:
+            rect_boss = self.sprite1.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite1, rect_boss)
+
+        if self.phase == 1:
+            rect_boss = self.sprite2.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite2, rect_boss)
+
+        if self.phase == 2:
+            rect_boss = self.sprite3.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite3, rect_boss)
+
+        if self.phase == 5:
+            rect_joueur = self.sprite.get_rect(topleft=(int(self.pos.x), int(self.pos.y)))
+            screen.blit(self.sprite, rect_joueur)
