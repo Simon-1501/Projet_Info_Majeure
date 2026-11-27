@@ -216,7 +216,7 @@ while running:
 
     # Mettre à jour l'affichage de l'écran
         compteur_vivant = 0
-        # Joueur
+        # Joueurs
         for player in players:
             if player.est_vivant():
                 compteur_vivant += 1
@@ -238,7 +238,7 @@ while running:
         # Limite à 60 FPS et calcul du dt (en secondes)
         dt = clock.tick(60) / 1000
 
-    elif state == 'PVE': #on affronte un monstre qui nous court juste dessus, puis le boss si on les bat tous
+    elif state == 'PVE': #on affronte des monstres qui nous court juste dessus, puis le boss si on les bat tous
         screen.blit(bg_jeux,(0,0)) 
          
         for ligne in grille_du_jeu1:
