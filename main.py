@@ -64,13 +64,13 @@ map1 = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
 mapboss=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,2,2,2,2,2,2,0,2,2,2,2,2,2,1], 
+        [1,0,2,0,0,2,2,0,2,2,0,0,2,0,1], 
         [1,2,5,2,2,1,0,0,0,1,2,2,5,2,1],
-        [1,2,2,2,2,0,1,1,1,0,2,2,2,2,1],
-        [1,2,1,2,1,0,1,0,1,0,1,2,1,2,1],
-        [1,2,2,2,2,0,1,1,1,0,2,2,2,2,1],
+        [1,0,2,0,2,0,1,1,1,0,2,0,2,0,1],
+        [1,0,1,2,1,0,1,0,1,0,1,2,1,0,1],
+        [1,0,2,0,2,0,1,1,1,0,2,0,2,0,1],
         [1,2,5,2,2,1,0,0,0,1,2,2,5,2,1],
-        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,1], 
+        [1,0,2,0,0,0,2,2,2,0,0,0,2,0,1], 
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
 mapboss2=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -344,6 +344,8 @@ while running:
 
                                 if (ny, nx) not in cases_dangereuses:
                                     cases_dangereuses.append((ny, nx))
+        if compteur_shield <= 2:
+            boss.LASER_DURATION = 0.5
 
         if boss.phase == 1 and (compteur_shield == 0 or keys[pygame.K_p]):
             grille_du_jeu = creer_grille(mapboss2)
@@ -358,7 +360,7 @@ while running:
             if boss.laser_timer <= 0:
                 boss.laser_timer = boss.LASER_COOLDOWN
                 tile_joueur = grille_du_jeu[int(players[0].pos_grille[1])][int(players[0].pos_grille[0])]
-                tile_joueur.laser_boss()
+                tile_joueur.laser_boss(boss.LASER_DURATION)
             
 
         elif boss.phase == 2:

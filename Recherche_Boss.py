@@ -56,7 +56,7 @@ def dijkstra(g,s):
     return (M,p,d)
 
 def recherche_largeur(depart_l, graphe_carte, cases_dangereuses): #BFS
-    depart = (int(depart_l[0]), int(depart_l[1]))  # (ligne, col)
+    depart = (int(depart_l[0]), int(depart_l[1]))  # (col, ligne)
     file = [depart]
     parents = {depart: None}
     case_sure = None

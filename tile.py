@@ -57,7 +57,7 @@ class Tile(StateChart):
         self.laser_arrive = False
 
 
-        self.LASER_DURATION = 0.5 # 0.5 seconde avant le laser
+        self.LASER_DURATION = 0.75 # 0.75 seconde avant le laser
         self.BOMB_DURATION = 2.0  # 2 secondes avant explosion
         self.FIRE_DURATION = 0.5   # 0.5 seconde de fire
 
@@ -74,6 +74,7 @@ class Tile(StateChart):
             if self.timer >= self.FIRE_DURATION:
                 self.timer = 0
                 self.extinguish()
+        
         elif self.current_state == Tile.passage and self.laser_arrive:
             if self.timer <= 0:
                 self.explode()
@@ -128,8 +129,8 @@ class Tile(StateChart):
                     break
 
 
-    def laser_boss(self):
-        self.timer = self.LASER_DURATION
+    def laser_boss(self,laser_duration):
+        self.timer = laser_duration
         self.laser_arrive = True
 
 

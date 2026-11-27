@@ -22,9 +22,9 @@ class Boss:
         self.pos_grille = [x, y]
         self.pos = pygame.Vector2(x*70, y*70)
 
-
+        self.LASER_DURATION = 0.75
         self.laser_timer = 0
-        self.LASER_COOLDOWN = 2
+        self.LASER_COOLDOWN = 2.5
         self.move_timer = 0
         self.MOVE_COOLDOWN = 0.5
         self.damage_timer = 0
@@ -73,6 +73,7 @@ class Boss:
         pos_actuelle = (int(self.pos_grille[0]), int(self.pos_grille[1]))  # (ligne, col)
         return pos_actuelle in cases_dangereuses
 
+
     def fuir(self, dt, grille, cases_dangereuses):
         if self.move_timer > 0:
             self.move_timer -= dt
@@ -90,9 +91,9 @@ class Boss:
             if len(chemin) > 0:
                 if chemin[0] == depart:
                     prochaine_case = chemin[1]
-                print('chemin', chemin, 'pro case', prochaine_case)
 
                 self.bouger_proche(prochaine_case, dt, grille)
+                print('bougé')
 
                 
 
